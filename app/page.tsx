@@ -1,113 +1,34 @@
+"use client"
+
 import Image from "next/image";
+import { processSVG } from "@/lib/common"
 
 export default function Home() {
+
+  let svg = `<svg width="800px" height="800px" viewBox="0 0 1024 1024" className="icon" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M260.36 139.68s16-49.62 49.62-49.62 89.2 27.21 88.84 68C398 248.53 308.57 263.63 310 328.57c0.8 36.82 61.57 59.26 64.83 9.6 3.2-48.82-10.61-62.25 21.61-99.24 45.62-46.42 133.72-63.55 223.3-19.21 37.62 20 59.23 60.83 100 85.64s56.83 10.4 65.63 24S775 347.78 751 351s-20.81 3.2-56.83 12.81c-34.76 9.27-31.21 36.82-149.67 34.42 0 0-4 34.42-4 54.42s7.53 135.52 16 173.68c3.2 14.41-5.6 22.41-5.6 22.41 1.6 34.42-43.42 247.56-43.42 247.56s18.52 20.5 19.15 28.62c0.8 0.3 3.05 3.47 3.5 9-1.65-2.4-3.3-5-6.15-6.9-0.93-0.63-13.18-4.67-26.41-5.4-7.23-0.4-20.93-0.62-30.61 1.8-3.9 1.2-5.7 1.5-7.5 4.8-0.9-3.45 1.35-4.35 1.5-6.6-2.4-7.05-6.6-13.81-17.56-16.51-4.65-0.45-11.7 2.9-10.8 1.65 9.75-13.51 63.08-14.76 63.08-14.76s38.42-200.09 37.62-240.91c0 0-10.4-21.61-3.2-36 0 0-29.61-198.49-24-220.9 0 0-28-24.81-61.63-24S406 411 344.4 410.2s-81.94-51.06-78.4-84.83c6.4-61.63 108.47-107.29 110.45-156.87 0.8-20-13.61-26.41-27.21-26.41s-54.42 27.21-54.42 27.21z" fill="#F5C2BE" />
+    <path d="M260.36 139.68s-24.81 15.41-23.91 37.92 30 64.53 40.52 58.53-5.5-46.62 17.81-66.83z" fill="#F48D83" />
+    <path d="M260.08 158c-2.53-13.07-19.3 38.39-13.81 48.44 9.69 17.75 24 33.5 30.7 29.67 5.81-3.32 3.51-17.23 4.24-32.41 0.58-12.26-12.72-2.3-21.13-45.7z" fill="#121639" />
+    <path d="M567.7 313.76c41.62-1.6 59.63-26 72-25.61s13.21 20.81 10.8 26-24.41 54.82-93.64 46-83.24-57.23-75.63-70c5.59-9.36 44.85 25.21 86.47 23.61z" fill="#EEA79F" />
+    <path d="M266.16 144.74s23.86-35.57 36.47-35.87 17.11 8 16.66 16.66S289.72 165 289.72 165z" fill="#FEFAE4" />
+    <path d="M291.9 135.51m-5.93 0a5.93 5.93 0 1 0 11.86 0 5.93 5.93 0 1 0-11.86 0Z" fill="#121639" />
+  </svg>`
+
+  const { _svg, arr } = processSVG(svg)
+  const color_0 = "#F5C2BE"
+  const color_1 = "#F48D83"
+  const color_2 = "#121639"
+  const color_3 = "#EEA79F"
+  const color_4 = "#FEFAE4"
+  const color_5 = "#121639"
+  const html = { __html: _svg };
+
+  // console.log(_svg, '_svg123')
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      123123
+      <div dangerouslySetInnerHTML={html}></div>
     </main>
   );
 }
