@@ -1,8 +1,22 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google"
+
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
+
+import { ThemeProvider } from "@/components/theme-provider"
+import { cn } from "@/lib/utils"
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +30,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <div className="container mx-auto py-8">
+            {children}
+          </div>
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
