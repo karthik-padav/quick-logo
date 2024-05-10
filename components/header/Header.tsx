@@ -20,7 +20,7 @@ export default function Header() {
         <header className="py-2 border-b flex flex-wrap gap-4 items-center justify-between w-full mx-auto">
             <nav className="container flex justify-between">
                 <div className="flex items-center">
-                    <Zap className="h-[1.2rem] w-[1.2rem] mr-2" />
+                    <Zap className="mr-2 text-red-400" />
                     <h1 className="text-base-content text-lg font-bold">Quick Logo</h1>
                 </div>
                 <div className="flex items-center">
@@ -32,7 +32,7 @@ export default function Header() {
                                 <span className="sr-only">Toggle theme</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" onCloseAutoFocus={(e) => e.preventDefault()}>
+                        <DropdownMenuContent align="end">
                             {themes.map((item) => (
                                 <DropdownMenuItem key={item.code} onClick={() => setTheme(item.code)}>
                                     {item.label}

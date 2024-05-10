@@ -1,96 +1,128 @@
+import { toast } from "sonner";
+import { updateSVG } from "./actions/svg.actions";
+
 const MAX_WIDTH = 800;
 
 
 export function processSVG(_svg: any) {
-  const regex = /fill="#[^"]*"/g;
-  const _arr = _svg.match(regex) || []
+  const WRAPPER_SVG = 'wrapper-svg';
+  const INNER_SVG = 'inner-svg';
+  const FOREIGN_OBJECT = 'foreignObject';
+  const FOREIGN_OBJECT_DIV = 'foreignObjectDiv';
 
-  // Add id
-  _svg = _svg.replace('<svg', '<svg id="inner-svg"')
-  let data = []
-  for (let i = 0; i < _arr.length; i++) {
-    const id = `_id_${i}`
-    _svg = _svg.replace(_arr[i], `${_arr[i]} id="${id}"`);
-    data.push({ id, color: _arr[i].replace('fill=', '').replaceAll('"', '') })
+  let tempEl = document.createElement('div');
+  tempEl.appendChild(_svg)
+  if (tempEl.querySelector(`#${WRAPPER_SVG}`)) {
+    const regex = /fill="#[^"]*"/g;
+    const _arr = JSON.stringify(_svg).match(regex) || []
+    let data = []
+    for (let i = 0; i < _arr.length; i++) {
+      const id = `_id_${i}`
+      _svg = _svg.replace(_arr[i], `${_arr[i]} id="${id}"`);
+      data.push({ id, color: _arr[i].replace('fill=', '').replaceAll('"', '') })
+    }
+    let ediv = tempEl.querySelector(`#${INNER_SVG}`)
+    ediv?.setAttribute('width', '100%');
+    ediv?.setAttribute('height', '100%');
+    return { _svg: tempEl.innerHTML, data }
+  } else {
+    let div = document.createElement('div');
+    let wrapper_svg = document.createElement('svg');
+    wrapper_svg?.setAttribute('width', '400px');
+    wrapper_svg?.setAttribute('height', '400px');
+    wrapper_svg?.setAttribute('id', WRAPPER_SVG);
+    wrapper_svg?.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+    let foreignObject = document.createElement('foreignObject');
+    foreignObject?.setAttribute('width', '100%');
+    foreignObject?.setAttribute('height', '100%');
+    foreignObject?.setAttribute('id', FOREIGN_OBJECT);
+
+    let foreignObjectDiv = document.createElement('div');
+    foreignObjectDiv?.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    foreignObjectDiv?.setAttribute('style', 'text-align:center;overflow:hidden;position:absolute;top:0;bottom:0;right:0;left:0;margin:auto;');
+    foreignObjectDiv?.setAttribute('id', FOREIGN_OBJECT_DIV);
+
+    _svg?.setAttribute('id', INNER_SVG)
+    _svg?.setAttribute('width', '100%');
+    _svg?.setAttribute('height', '100%');
+
+    foreignObjectDiv.appendChild(_svg)
+    foreignObject.appendChild(foreignObjectDiv)
+    wrapper_svg.appendChild(foreignObject)
+    div.appendChild(wrapper_svg)
+
+    return { _svg: div.innerHTML, data: [] }
   }
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="400px" height="400px" id="wrapper-svg">
-  <foreignObject width="100%" height="100%" id="foreignObject">
-  <div xmlns='http://www.w3.org/1999/xhtml' id='foreignObjectDiv' style="text-align:center;overflow:hidden;position: absolute;top: 0;bottom: 0;right: 0;left: 0;margin: auto;
-">
-  ${_svg}
-  </div>
-  </foreignObject>
-  
-    </svg>
-    `
-  return { _svg: svg, data }
 }
 
-export function downloadSvg() {
 
-  // const MAX_WIDTH 
-  // style
+export function downloadPng(filename: string, ext: string) {
+  const element = document.getElementById('wrapper-svg');
+  let clonedElement = element.cloneNode(true);
+  clonedElement?.setAttribute('width', MAX_WIDTH)
+  clonedElement?.setAttribute('height', MAX_WIDTH)
+  clonedElement = clonedElement?.outerHTML;
+  const blob = new Blob([clonedElement], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
 
+  const img = new Image();
 
-  // wrapper-svg
-  // foreignObjectDiv
-  // const wElm = document.getElementById('wrapper-svg');
-  // let wElm_styles = wElm?.getAttribute("style");
-  // let wElm_obj = getStyles(wElm_styles);
-  // if (wElm_obj['width']) wElm_obj['width'] = convertToPx(wElm_obj['width'])
-  // if (wElm_obj['height']) wElm_obj['height'] = convertToPx(wElm_obj['height'])
-  // let w_style = '';
-  // Object.keys(wElm_obj).forEach((key) => w_style = `${w_style}${key}:${wElm_obj[key]};`)
-  // wElm?.setAttribute("style", w_style);
+  // Once the image is loaded, draw it onto a canvas and convert to PNG
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
 
-  // // ============================
+    // Convert canvas to PNG data URL
+    const dataUrl = canvas.toDataURL('image/png');
 
-  // const fbdElm = document.getElementById('foreignObjectDiv');
-  // let fbdElm_styles = fbdElm?.getAttribute("style");
-  // let fbdElm_obj = getStyles(fbdElm_styles);
-  // if (fbdElm_obj['width']) fbdElm_obj['width'] = convertToPx(fbdElm_obj['width'])
-  // if (fbdElm_obj['height']) fbdElm_obj['height'] = convertToPx(fbdElm_obj['height'])
-  // let fbd_style = '';
-  // Object.keys(fbdElm_obj).forEach((key) => fbd_style = `${fbd_style}${key}:${fbdElm_obj[key]};`)
-  // fbdElm?.setAttribute("style", fbd_style);
+    // Trigger download of the PNG image
+    const link = document.createElement('a');
+    link.download = generateFileName(`${filename}.${ext}`);
+    link.href = dataUrl;
+    link.click();
+    uploadToServer({ svg: clonedElement, filename });
+  };
 
-  // // ============================
+  // Set the image source to a data URL representing the SVG content
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(clonedElement)));
 
-  const wElm = document.getElementById('wrapper-svg');
-  wElm?.setAttribute('width', MAX_WIDTH)
-  wElm?.setAttribute('height', MAX_WIDTH)
+  toast("Event has been created", {
+    description: "Sunday, December 03, 2023 at 9:00 AM"
+  })
+}
 
+function generateFileName(filename: string = "") {
+  return `quick_logo_${filename}`
+}
 
-  // const fbElm = document.getElementById('foreignObject');
-  // fbElm?.setAttribute('width', MAX_WIDTH)
-  // fbElm?.setAttribute('height', MAX_WIDTH)
-
-  // // ============================
-
-  // const isElm = document.getElementById('inner-svg');
-  // let isElm_width = isElm?.getAttribute('width')
-  // if (isElm_width) isElm_width = convertToPx(isElm_width)
-  // isElm?.setAttribute('width', isElm_width)
-  // let isElm_height = isElm?.getAttribute('height')
-  // if (isElm_height) isElm_height = convertToPx(isElm_height)
-  // isElm?.setAttribute('height', isElm_height)
-
-  // // ============================
-
-
-
-  const svgString = document.getElementById('wrapper-svg')?.outerHTML;
-  const blob = new Blob([svgString], { type: 'image/svg+xml' });
+export function downloadSvg(filename: string, ext: string) {
+  const element = document.getElementById('wrapper-svg');
+  let clonedElement = element?.cloneNode(true);
+  clonedElement?.setAttribute('width', MAX_WIDTH)
+  clonedElement?.setAttribute('height', MAX_WIDTH)
+  clonedElement = clonedElement?.outerHTML;
+  const blob = new Blob([clonedElement], { type: 'image/svg+xml' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+
+
+
   a.href = url;
-  a.download = 'font-awesome-icon.svg';
+  a.download = generateFileName(`${filename}.${ext}`);
+  uploadToServer({ svg: clonedElement, filename });
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 };
+
+function uploadToServer({ svg, filename }: { svg: string, filename: string }) {
+  updateSVG({ svg, filename })
+}
 
 export function getStyles(styles: string) {
   let obj = {}
@@ -102,210 +134,225 @@ export function getStyles(styles: string) {
 }
 
 
-export async function setColor(id: string, color: string) {
-  const element = document.getElementById(id);
-  element?.setAttribute("fill", color)
-  const colorEl = document.getElementById(`_color_${id}`)
-  colorEl?.setAttribute('value', color)
-}
+export function _controler() {
+  const wsvg = document.getElementById('wrapper-svg');
+  const innerSvgEl = document.getElementById('inner-svg');
+  const fobjDiv = document.getElementById('foreignObjectDiv');
 
-export function rotate(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('inner-svg');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  obj['transform'] = `rotate(${value}deg)`
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-  let txt = document.getElementById('rotate-value');
-  txt.innerHTML = `${value}&deg;`
-}
+  const fobjStyles = fobjDiv?.getAttribute("style");
+  const fObj = getStyles(fobjStyles);
 
-
-export function shadow(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('foreignObjectDiv');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  obj['box-shadow'] = `0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.2), 0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.19)`
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-  let txt = document.getElementById('shadow-value');
-  txt.innerHTML = `${value}px;`
-}
-
-
-export function iconResize(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('inner-svg');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  element?.setAttribute("width", `${value}%`);
-  obj['margin'] = '0 auto';
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-  let txt = document.getElementById('icon-size-value');
-  txt.innerHTML = `${value}%`
-
-}
-
-export function opacity(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('wrapper-svg');
-  element?.setAttribute("fill-opacity", value)
-  let txt = document.getElementById('opacity-value');
-  txt.innerHTML = value
-
-}
-
-export function border(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('inner-svg');
-  element?.setAttribute("stroke-width", value)
-  element?.setAttribute("stroke-linecap", "round")
-  element?.setAttribute("stroke-linejoin", "round")
-  element?.setAttribute("stroke", "#FFEB4D")
-  let txt = document.getElementById('border-value');
-  txt.innerHTML = `${value}px`
-}
-
-interface RGBA {
-  r: number, g: number, b: number, a: number
-}
-
-export function setBgColor(color: RGBA) {
-  const { r, g, b, a } = color
-  const element = document.getElementById('foreignObjectDiv');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  obj['background-color'] = `rgb(${r} ${g} ${b} / ${a * 100}%)`;
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-}
-
-export function resizeBg(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('foreignObjectDiv');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  obj['width'] = `${value}%`;
-  obj['height'] = `${value}%`;
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-  let txt = document.getElementById('bg-size-value');
-  txt.innerHTML = `${value}%`;
-
-}
-
-export function borderRandiusChange(event: ChangeEvent<HTMLInputElement>) {
-  const value = event.target.value
-  const element = document.getElementById('foreignObjectDiv');
-  let styles = element?.getAttribute("style");
-  let obj = getStyles(styles);
-  obj['border-radius'] = `${value}px`;
-  let _style = '';
-  Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-  element?.setAttribute("style", _style);
-  let txt = document.getElementById('radius-value');
-  txt.innerHTML = `${value}px`;
-}
-
-export function controlList() {
+  const innerSvgStyles = innerSvgEl?.getAttribute("style");
+  const innerSvgStylesObj = getStyles(innerSvgStyles);
+  const iconSize = innerSvgEl?.getAttribute("width")?.replace('%', '') || 100;
+  const rotate = innerSvgStylesObj?.['transform']?.replace('rotate', '')?.replace('deg', '') || 0;
+  const borderColor = innerSvgEl?.getAttribute('stroke') || "#000000";
+  const border = innerSvgEl?.getAttribute('stroke-width') || 1
+  const fillColor = innerSvgEl?.getAttribute('fill') || "#ffffff";
+  const fillOpacity = innerSvgEl?.getAttribute('fill-opacity') || 1;
+  const bgColor = fObj?.['background'] || 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)'
+  const bgSize = fObj?.['width']?.replace('%', '') || 100;
+  const radius = fObj?.['border-radius']?.replace('px', '') || 0;
+  const shadow = fObj?.['box-shadow']?.split(' ').find(i => i.includes('px'))?.replace('px', '') || 0
   return {
-    icon: [
-      {
-        label: "Rotate",
-        label_id: "rotate-value",
-        default_label_value: `0&deg;`,
+    iconSize: {
+      label: "Icon size",
+      valuePrefix: "%",
+      tab: "icon",
+      setSVG: (value: string, ref: any) => {
+        const wrapperSvgElement = ref.current
+        const element = wrapperSvgElement.getElementById('inner-svg');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        element?.setAttribute("width", `${value}%`);
+        obj['margin'] = '0 auto';
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
+      },
+      attr: {
+        type: "range",
+        min: 1,
+        max: 100,
+        value: iconSize,
+        step: 1,
+        className: "w-full slider dark:bg-accent bg-gray-200"
+      }
+    },
+    rotate: {
+      attr: {
         type: "range",
         min: -180,
         max: 180,
-        defaultValue: 0,
+        value: rotate,
         step: 5,
-        _onChange: rotate
+        className: "w-full slider dark:bg-accent bg-gray-200"
       },
-      {
-        label: "Border",
-        label_id: "border-value",
-        default_label_value: "0px",
-        type: "range",
+      label: "Rotate",
+      valuePrefix: "deg",
+      tab: "icon",
+      setSVG: (value: string) => {
+        const element = document.getElementById('inner-svg');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        obj['transform'] = `rotate(${value}deg)`
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
+      }
+    },
+    borderColor: {
+      attr: {
+        value: borderColor,
+        type: "color",
+      },
+      label: "Border Color",
+      valuePrefix: "",
+      tab: "icon",
+      setSVG: (value: string) => {
+        const element = document.getElementById('inner-svg');
+        element?.setAttribute("stroke", value)
+      }
+    },
+    border: {
+      attr: {
         min: 1,
         max: 4,
-        defaultValue: 1,
+        value: border,
         step: 0.1,
-        _onChange: border
-      },
-      {
-        label: "Icon Size",
-        label_id: "icon-size-value",
-        default_label_value: "100%",
         type: "range",
-        min: 10,
-        max: 100,
-        defaultValue: 100,
-        step: 1,
-        _onChange: iconResize
+        className: "w-full slider dark:bg-accent bg-gray-200"
       },
-      {
-        label: "Opacity",
-        label_id: "opacity-value",
-        default_label_value: 1,
-        type: "range",
+      label: "Border",
+      valuePrefix: "px",
+      tab: "icon",
+      setSVG: (value: string) => {
+        const element = document.getElementById('inner-svg');
+        element?.setAttribute("stroke-width", value)
+        element?.setAttribute("stroke-linecap", "round")
+        element?.setAttribute("stroke-linejoin", "round")
+      }
+    },
+    fillColor: {
+      attr: {
+        value: fillColor,
+        type: "color",
+      },
+      label: "Fill Color",
+      valuePrefix: "",
+      tab: "icon",
+      setSVG: (value: string) => {
+        const element = document.getElementById('inner-svg');
+        element?.setAttribute("fill", value)
+      }
+    },
+    fillOpacity: {
+      attr: {
         min: 0,
         max: 1,
-        defaultValue: 1,
+        value: fillOpacity,
         step: 0.1,
-        _onChange: opacity
-      }
-    ],
-    bg: [
-      {
-        label: "Background Color",
-        label_id: "bg-color-value",
-        default_label_value: "",
-        type: "color",
-        _onChange: setBgColor
+        type: "range",
+        className: "w-full slider dark:bg-accent bg-gray-200"
       },
-      {
-        label: "Background Size",
-        label_id: "bg-size-value",
-        default_label_value: '100%',
+      label: "Fill Opacity",
+      valuePrefix: "%",
+      tab: "icon",
+      setSVG: (value: string) => {
+        const element = document.getElementById('inner-svg');
+        element?.setAttribute("fill-opacity", value)
+      }
+    },
+    bgColor: {
+      attr: {
+        type: "rgba_color",
+        hideInputs: true,
+        hideAdvancedSliders: true,
+        hidePresets: true,
+        hideGradientStop: true,
+        value: bgColor,
+      },
+      setSVG: (color: string) => {
+        const element = document.getElementById('foreignObjectDiv');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        obj['background'] = color;
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
+      },
+      label: "Background Color",
+      valuePrefix: "",
+      hideValue: true,
+      tab: "bg",
+    },
+    bgSize: {
+      label: "Background Size",
+      valuePrefix: "%",
+      tab: "bg",
+      setSVG: (value: string) => {
+        const element = document.getElementById('foreignObjectDiv');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        obj['width'] = `${value}%`;
+        obj['height'] = `${value}%`;
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
+      },
+      attr: {
         type: "range",
         min: 1,
         max: 100,
-        defaultValue: 100,
+        value: bgSize,
         step: 1,
-        _onChange: resizeBg
+        className: "w-full slider dark:bg-accent bg-gray-200"
+      }
+    },
+    radius: {
+      label: "Radius",
+      valuePrefix: "px",
+      tab: "bg",
+      setSVG: (value: string) => {
+        const element = document.getElementById('foreignObjectDiv');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        obj['border-radius'] = `${value}px`;
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
       },
-      {
-        label: "Radius",
-        label_id: "radius-value",
-        default_label_value: '0px',
+      attr: {
         type: "range",
         min: 0,
         max: 300,
-        defaultValue: 0,
+        value: radius,
         step: 10,
-        _onChange: borderRandiusChange
+        className: "w-full slider dark:bg-accent bg-gray-200"
+      }
+    },
+    shadow: {
+      label: "Shadow",
+      valuePrefix: "px",
+      tab: "bg",
+      setSVG: (value: string) => {
+        const element = document.getElementById('foreignObjectDiv');
+        let styles = element?.getAttribute("style");
+        let obj = getStyles(styles);
+        obj['box-shadow'] = `0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.2), 0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.19)`
+        let _style = '';
+        Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
+        element?.setAttribute("style", _style);
       },
-      {
-        label: "Shadow",
-        label_id: "shadow-value",
-        default_label_value: '0px',
+      attr: {
         type: "range",
         min: 0,
         max: 12,
-        defaultValue: 0,
+        value: parseInt(shadow),
         step: 1,
-        _onChange: shadow
+        className: "w-full slider dark:bg-accent bg-gray-200"
       }
-    ]
+    }
   }
 }
-
 

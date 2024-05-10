@@ -14,7 +14,6 @@ import {
   setColor,
   controlList,
   downloadPng,
-  _controler,
 } from "@/lib/common"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,7 +27,6 @@ import Controls from "@/components/controls"
 import { ArrowDownToLine, Plus, AArrowDown, AArrowUp, ALargeSmall } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import ColorPicker, { useColorPicker } from 'react-best-gradient-color-picker'
 
 import {
   DropdownMenu,
@@ -45,14 +43,6 @@ export default function Home() {
 
   const [svgdata, setSvgData] = useState({})
   const downloadableZoneRef = useRef()
-  const [controler, setControler] = useState(_controler());
-  const [color, setColor] = useState(_controler()?.bgColor?.value);
-  const controlerRef = useRef()
-
-
-  function handleControler(value: string, id: string) {
-    setControler((prev) => { return { ...prev, [id]: { ...prev[id], attr: { ...prev[id].attr, value } } } })
-  }
 
 
   function selectedSVG(html, filename) {
@@ -87,58 +77,12 @@ export default function Home() {
   }, [])
 
   const html = { __html: svgdata._svg };
-  console.log(controler, 'controler123')
+  console.log(downloadableZoneRef, 'downloadableZoneRef')
   return (
     <main className="min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="col-span-1">
-          <Tabs defaultValue="icon" className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger className="w-full" value="icon">Icon</TabsTrigger>
-              <TabsTrigger className="w-full" value="bg">Background</TabsTrigger>
-            </TabsList>
-            {['icon', 'bg'].map((i) => {
-              return (
-                <TabsContent key={i} value={i} className="p-4 rounded-lg bg-gray-100 dark:bg-gray-900 mt-4 md:min-h-96 ">
-                  <div ref={controlerRef}>
-                    {Object.keys(controler).filter((key) => controler[key].tab === i).map((key) => {
-                      const { attr, label, valuePrefix, hideValue, setSVG } = controler[key]
-                      const { type, value, ...rest } = attr;
-                      return (
-                        <div key={key} className="mb-4">
-                          <p className="flex justify-between mb-1">
-                            {label}
-                            {!hideValue && <span>
-                              {attr.value === 'currentColor' ? '#000000' : attr.value}{valuePrefix}
-                            </span>}
-                          </p>
-                          {attr.type === 'rgba_color' ?
-                            <ColorPicker
-                              {...rest}
-                              width={200}
-                              height={200}
-                              id={key} value={color} onChange={async (color) => {
-                                setColor(color)
-                                await handleControler(color, key)
-                                setSVG(color)
-                              }} />
-                            :
-                            <input
-                              disabled={!svgdata?._svg}
-                              {...attr} id={key} onChange={async (e) => {
-                                const { value } = e.target;
-                                await handleControler(value, key)
-                                setSVG(value, downloadableZoneRef)
-                              }} />
-                          }
-                        </div>
-                      )
-                    })}
-                  </div>
-                </TabsContent>
-              )
-            })}
-          </Tabs >
+          <Controls svgdata={svgdata} />
         </div>
 
         <div className="col-span-2">
