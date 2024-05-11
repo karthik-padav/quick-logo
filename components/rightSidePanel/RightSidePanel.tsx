@@ -16,8 +16,6 @@ export default function RightSidePanel(svgdata: any) {
         setList(data)
     }
 
-    console.log(list, 'data123')
-    console.log(svgdata, 'svgdata123')
     if (!list.length) return null
     return (
         <>

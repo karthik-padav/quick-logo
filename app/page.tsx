@@ -15,6 +15,7 @@ import {
   controlList,
   downloadPng,
   _controler,
+  updateSVGControl,
 } from "@/lib/common"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,49 +46,69 @@ export default function Home() {
 
   const [svgdata, setSvgData] = useState({})
   const downloadableZoneRef = useRef()
-  const [controler, setControler] = useState(_controler());
   const [color, setColor] = useState(_controler()?.bgColor?.value);
   const controlerRef = useRef()
 
 
   function handleControler(value: string, id: string) {
-    setControler((prev) => { return { ...prev, [id]: { ...prev[id], attr: { ...prev[id].attr, value } } } })
+    setSvgData((prev) => {
+      let { controler, _svg, ...rest } = prev;
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(_svg, 'image/svg+xml');
+
+      _svg = updateSVGControl({ key: id, svgDoc, value })
+
+      controler = {
+        ...controler,
+        [id]: {
+          ...controler[id],
+          attr: { ...controler[id].attr, value }
+        }
+      }
+      return { ...rest, _svg, controler }
+    })
   }
+
+  // useEffect(() => {
+  //   if (svgdata._svg)
+  //     updateSVGControl(controler, downloadableZoneRef)
+  // }, [controler])
+
 
 
   function selectedSVG(html, filename) {
     const { _svg, data } = processSVG(html)
-    setSvgData({ _svg, data, filename })
+    setSvgData({ _svg, data, filename, controler: _controler() })
   }
 
 
-  // Set all initial value
-  useEffect(() => {
-    updateDimensions();
-  }, [svgdata._svg])
+  // useEffect(() => {
+  //   updateDimensions();
+  // }, [svgdata._svg])
 
 
 
-  const updateDimensions = () => {
-    if (downloadableZoneRef.current) {
-      const { width } = downloadableZoneRef.current.getBoundingClientRect()
-      const e1 = document.getElementById('wrapper-svg');
-      e1?.setAttribute('width', `${width}px`)
-      e1?.setAttribute('height', `${width}px`)
-    }
-  }
+  // const updateDimensions = () => {
+  //   if (downloadableZoneRef.current) {
+  //     const { width } = downloadableZoneRef.current.getBoundingClientRect()
+  //     const e1 = document.getElementById('wrapper-svg');
+  //     e1?.setAttribute('width', `${width}px`)
+  //     e1?.setAttribute('height', `${width}px`)
+  //   }
+  // }
 
-  useEffect(() => {
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
+  // useEffect(() => {
+  //   updateDimensions();
+  //   window.addEventListener('resize', updateDimensions);
 
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, [])
+  //   return () => {
+  //     window.removeEventListener('resize', updateDimensions);
+  //   };
+  // }, [])
 
-  const html = { __html: svgdata._svg };
-  console.log(controler, 'controler123')
+  const { controler, _svg } = svgdata;
+  console.log(svgdata, 'svgdata123')
+  const html = { __html: _svg };
   return (
     <main className="min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -101,7 +122,7 @@ export default function Home() {
               return (
                 <TabsContent key={i} value={i} className="p-4 rounded-lg bg-gray-100 dark:bg-gray-900 mt-4 md:min-h-96 ">
                   <div ref={controlerRef}>
-                    {Object.keys(controler).filter((key) => controler[key].tab === i).map((key) => {
+                    {controler && Object.keys(controler).filter((key) => controler[key].tab === i).map((key) => {
                       const { attr, label, valuePrefix, hideValue, setSVG } = controler[key]
                       const { type, value, ...rest } = attr;
                       return (
@@ -120,7 +141,7 @@ export default function Home() {
                               id={key} value={color} onChange={async (color) => {
                                 setColor(color)
                                 await handleControler(color, key)
-                                setSVG(color)
+                                // setSVG(color, downloadableZoneRef)
                               }} />
                             :
                             <input
@@ -128,7 +149,7 @@ export default function Home() {
                               {...attr} id={key} onChange={async (e) => {
                                 const { value } = e.target;
                                 await handleControler(value, key)
-                                setSVG(value, downloadableZoneRef)
+                                // setSVG(value, downloadableZoneRef)
                               }} />
                           }
                         </div>
