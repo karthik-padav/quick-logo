@@ -159,17 +159,6 @@ export function _controler() {
             label: "Icon size",
             valuePrefix: "%",
             tab: "icon",
-            setSVG: (value: string, ref: any) => {
-                const wrapperSvgElement = ref.current
-                const element = wrapperSvgElement.getElementById('inner-svg');
-                let styles = element?.getAttribute("style");
-                let obj = getStyles(styles);
-                element?.setAttribute("width", `${value}%`);
-                obj['margin'] = '0 auto';
-                let _style = '';
-                Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-                element?.setAttribute("style", _style);
-            },
             attr: {
                 type: "range",
                 min: 1,
@@ -185,21 +174,12 @@ export function _controler() {
                 min: -180,
                 max: 180,
                 value: rotate,
-                step: 5,
+                step: 10,
                 className: "w-full slider dark:bg-accent bg-gray-200"
             },
             label: "Rotate",
             valuePrefix: "deg",
             tab: "icon",
-            setSVG: (value: string) => {
-                const element = document.getElementById('inner-svg');
-                let styles = element?.getAttribute("style");
-                let obj = getStyles(styles);
-                obj['transform'] = `rotate(${value}deg)`
-                let _style = '';
-                Object.keys(obj).forEach((key) => _style = `${_style}${key}:${obj[key]};`)
-                element?.setAttribute("style", _style);
-            }
         },
         borderColor: {
             attr: {
@@ -209,10 +189,6 @@ export function _controler() {
             label: "Border Color",
             valuePrefix: "",
             tab: "icon",
-            setSVG: (value: string) => {
-                const element = document.getElementById('inner-svg');
-                element?.setAttribute("stroke", value)
-            }
         },
         border: {
             attr: {
@@ -368,6 +344,26 @@ export function updateSVGControl({ key, svgDoc, value }: { key: string, value: s
             insvg?.setAttribute('width', `${value}%`);
             insvg?.setAttribute('height', `${value}%`);
             break;
+        case 'rotate':
+            insvg?.setAttribute('transform', `rotate(${value})`)
+            break;
+        case 'border':
+            insvg?.setAttribute("stroke-width", value);
+            insvg?.setAttribute("stroke-linecap", "round")
+            insvg?.setAttribute("stroke-linejoin", "round")
+            break;
+        case 'borderColor':
+            insvg?.setAttribute("stroke", value);
+            break;
+        case 'bgColor':
+            let fbdStyles = fbd?.getAttribute("style");
+            let fbdObj = getStyles(fbdStyles);
+            fbdObj['background'] = value;
+            let _styles = ''
+            Object.keys(fbdObj).forEach((key) => _styles = `${_styles}${key}: ${fbdObj[key]}; `)
+            fbd?.setAttribute("bgcolor", value);
+            break;
+
 
         default:
             break;
@@ -382,8 +378,8 @@ export function updateSVGControl({ key, svgDoc, value }: { key: string, value: s
     // const border = controler?.border?.attr?.value
 
     // if (iconSize) {
-    //     insvg?.setAttribute('width', `${iconSize}%`);
-    //     insvg?.setAttribute('height', `${iconSize}%`);
+    //     insvg?.setAttribute('width', `${ iconSize } % `);
+    //     insvg?.setAttribute('height', `${ iconSize } % `);
     // }
     // insvg?.setAttribute("stroke", borderColor);
     // insvg?.setAttribute("stroke-width", border)
@@ -395,8 +391,8 @@ export function updateSVGControl({ key, svgDoc, value }: { key: string, value: s
     // console.log(getStyles(styles), 'obj123')
     // obj['margin'] = '0 auto';
     // if (rotate || rotate === 0)
-    //     obj['transform'] = `rotate(${rotate}deg)`
-    // Object.keys(obj).forEach((key) => _styles = `${styles}${key}:${obj[key]};`)
+    //     obj['transform'] = `rotate(${ rotate }deg)`
+    // Object.keys(obj).forEach((key) => _styles = `${ styles }${ key }: ${ obj[key]}; `)
     // console.log(getStyles(styles), 'styles123')
     // insvg?.setAttribute("style", _styles);
 
@@ -405,16 +401,16 @@ export function updateSVGControl({ key, svgDoc, value }: { key: string, value: s
     // if (bgColor)
     //     fbdObj['background'] = bgColor;
     // if (bgSize || bgSize === 0) {
-    //     fbdObj['width'] = `${bgSize}%`;
-    //     fbdObj['height'] = `${bgSize}%`;
+    //     fbdObj['width'] = `${ bgSize }% `;
+    //     fbdObj['height'] = `${ bgSize }% `;
     // }
     // if (radius)
-    //     fbdObj['border-radius'] = `${radius}px`;
+    //     fbdObj['border-radius'] = `${ radius } px`;
     // if (shadow)
-    //     fbdObj['box-shadow'] = `0 ${shadow}px ${shadow}px 0 rgba(0, 0, 0, 0.2), 0 ${shadow}px ${shadow}px 0 rgba(0, 0, 0, 0.19)`
+    //     fbdObj['box-shadow'] = `0 ${ shadow }px ${ shadow }px 0 rgba(0, 0, 0, 0.2), 0 ${ shadow }px ${ shadow }px 0 rgba(0, 0, 0, 0.19)`
 
 
-    // Object.keys(fbdObj).forEach((key) => fbdStyles = `${fbdStyles}${key}:${fbdObj[key]};`)
+    // Object.keys(fbdObj).forEach((key) => fbdStyles = `${ fbdStyles }${ key }:${ fbdObj[key] }; `)
     // fbd?.setAttribute("style", fbdStyles);
 
     return new XMLSerializer().serializeToString(svgDoc);
