@@ -31,7 +31,7 @@
     cursor: pointer;
   }
 
-  .sample_svg #wrapper-svg {
+  .sample_svg > svg {
     width: 100% !important;
     height: 100% !important;
   }

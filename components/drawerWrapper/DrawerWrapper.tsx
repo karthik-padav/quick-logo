@@ -47,7 +47,8 @@ interface Params {
 
 export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const [open, setOpen] = useState<boolean>(false);
-  const svgRef = useRef();
+  const svgRef = useRef<HTMLInputElement>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const paginationRef = useRef<Pagination>({
     pagenumber: 1,
     originalList: Object.keys(icons).filter((i) => i.includes("Icon")),
@@ -118,11 +119,11 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
     setInputValue("");
   }
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e?.target?.files[0];
     const reader = new FileReader();
     reader.onload = function (event) {
-      const svgContent = event.target.result;
+      const svgContent = event?.target?.result;
       const svgElement = new DOMParser().parseFromString(
         svgContent,
         "image/svg+xml",
@@ -157,12 +158,8 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" className="p-2">
-                  <input
-                    type="file"
-                    accept=".svg"
-                    onChange={handleFileChange}
-                  />
+                <Button variant="outline" className="p-2 ml-2" onClick={() => { inputFileRef?.current?.click() }}>
+                  <input type="file" accept=".svg" onChange={handleFileChange} ref={inputFileRef} hidden />
                   <Upload />
                 </Button>
               </TooltipTrigger>

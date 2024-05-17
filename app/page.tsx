@@ -1,231 +1,387 @@
-"use client";
-
-import {
-  border,
-  borderRandiusChange,
-  downloadSvg,
-  shadow,
-  iconResize,
-  opacity,
-  processSVG,
-  rotate,
-  setBgColor,
-  sizeChange,
-  setColor,
-  controlList,
-  downloadPng,
-  _controler,
-  updateSVGControl,
-} from "@/lib/common";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCoffee } from "@fortawesome/free-solid-svg-icons";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RgbaColorPicker } from "react-colorful";
-import { Button } from "@/components/ui/button";
-import DrawerWrapper from "@/components/drawerWrapper";
-import Controls from "@/components/controls";
-import {
-  ArrowDownToLine,
-  Plus,
-  AArrowDown,
-  AArrowUp,
-  ALargeSmall,
-} from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import ColorPicker, { useColorPicker } from "react-best-gradient-color-picker";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import RightSidePanel from "@/components/rightSidePanel";
+import CountUp from "react-countup";
+import VisibilitySensor from "react-visibility-sensor";
 
 export default function Home() {
-  const [svgdata, setSvgData] = useState({});
-  const downloadableZoneRef = useRef();
-  const [color, setColor] = useState("");
-  const controlerRef = useRef();
-
-  function handleControler(value: string, id: string) {
-    setSvgData((prev) => {
-      let { controler, _svg, ...rest } = prev;
-      const parser = new DOMParser();
-      const svgDoc = parser.parseFromString(_svg, "image/svg+xml");
-
-      _svg = updateSVGControl({ key: id, svgDoc, value });
-
-      controler = {
-        ...controler,
-        [id]: {
-          ...controler[id],
-          attr: { ...controler[id].attr, value },
-        },
-      };
-      return { ...rest, _svg, controler };
-    });
-  }
-
-  // useEffect(() => {
-  //   if (svgdata._svg)
-  //     updateSVGControl(controler, downloadableZoneRef)
-  // }, [controler])
-
-  function selectedSVG(html, filename) {
-    const { _svg, data } = processSVG(html);
-    setSvgData({ _svg, data, filename, controler: _controler(_svg) });
-  }
-
-  // useEffect(() => {
-  //   updateDimensions();
-  // }, [svgdata._svg])
-
-  // const updateDimensions = () => {
-  //   if (downloadableZoneRef.current) {
-  //     const { width } = downloadableZoneRef.current.getBoundingClientRect()
-  //     const e1 = document.getElementById('wrapper-svg');
-  //     e1?.setAttribute('width', `${width}px`)
-  //     e1?.setAttribute('height', `${width}px`)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   updateDimensions();
-  //   window.addEventListener('resize', updateDimensions);
-
-  //   return () => {
-  //     window.removeEventListener('resize', updateDimensions);
-  //   };
-  // }, [])
-
-  const { controler, _svg } = svgdata;
-  console.log(controler, "controler123");
-  const html = { __html: _svg };
   return (
-    <main className="min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="col-span-1">
-          <Tabs defaultValue="icon" className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger className="w-full" value="icon">
-                Icon
-              </TabsTrigger>
-              <TabsTrigger className="w-full" value="bg">
-                Background
-              </TabsTrigger>
-            </TabsList>
-            {["icon", "bg"].map((i) => {
-              return (
-                <TabsContent
-                  key={i}
-                  value={i}
-                  className="p-4 rounded-lg bg-gray-100 dark:bg-gray-900 mt-4 md:min-h-96 "
-                >
-                  <div ref={controlerRef}>
-                    {controler &&
-                      Object.keys(controler)
-                        .filter((key) => controler[key].tab === i)
-                        .map((key) => {
-                          const {
-                            attr,
-                            label,
-                            valuePrefix,
-                            hideValue,
-                            setSVG,
-                          } = controler[key];
-                          const { type, value, ...rest } = attr;
-                          return (
-                            <div key={key} className="mb-4">
-                              <p className="flex justify-between mb-1">
-                                {label}
-                                {!hideValue && (
-                                  <span>
-                                    {attr.value === "currentColor"
-                                      ? "#000000"
-                                      : attr.value}
-                                    {valuePrefix}
-                                  </span>
-                                )}
-                              </p>
-                              {attr.type === "rgba_color" ? (
-                                <ColorPicker
-                                  {...rest}
-                                  width={200}
-                                  height={200}
-                                  id={key}
-                                  value={color}
-                                  onChange={async (color) => {
-                                    setColor(color);
-                                    await handleControler(color, key);
-                                    // setSVG(color, downloadableZoneRef)
-                                  }}
-                                />
-                              ) : (
-                                <input
-                                  disabled={!svgdata?._svg}
-                                  {...attr}
-                                  id={key}
-                                  onChange={async (e) => {
-                                    const { value } = e.target;
-                                    await handleControler(value, key);
-                                    // setSVG(value, downloadableZoneRef)
-                                  }}
-                                />
-                              )}
-                            </div>
-                          );
-                        })}
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-        </div>
-
-        <div className="col-span-2">
-          <DrawerWrapper onSelect={selectedSVG} svgdata={svgdata} />
-          <div className="p-10 w-full min-h-96 relative h-auto flex justify-center items-center dark:bg-gray-900 bg-gray-100 rounded-lg bg-[url('/grid.svg')]">
-            {svgdata?._svg ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div
-                      dangerouslySetInnerHTML={html}
-                      ref={downloadableZoneRef}
-                      className="w-full outline-2 outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25] flex justify-center items-center"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Downloadable Zone</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              <p>
-                Press
-                <span className="leading-1 text-white font-bold bg-red-400 rounded-lg border border-base-content/20 py-1 px-3 mx-1">
-                  <kbd>Ctrl + K</kbd>
-                </span>
-                to select icon
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="col-span-1">
-          <RightSidePanel {...svgdata} />
+    <section className="text-black body-font lg:pt-20">
+      <div className="container px-5 pt-32 mx-auto lg:px-4 lg:py-4">
+        <div className="flex flex-col w-full mb-2 text-left md:text-center ">
+          <h1 className="mb-2 text-6xl font-bold tracking-tighter text-white lg:text-8xl md:text-7xl">
+            <span>We are making </span>
+            <br className="hidden lg:block"></br>
+            Stunning websites
+          </h1>
+          <br></br>
+          <p className="mx-auto  text-xl font-normal leading-relaxed text-gray-600 dark:text-gray-300 lg:w-2/3">
+            nine4 is a free to use template website for websites made with{" "}
+            <a href="https://nextjs.org/" className="underline">
+              Next.js
+            </a>{" "}
+            and styled with Tailwind CSS
+          </p>
         </div>
       </div>
-    </main>
+      <div className="container flex flex-col items-center justify-center py-8 mx-auto rounded-lg md:p-1 p-3">
+        <img
+          className="object-cover object-center w-full mb-10 border-gray-200 dark:border-gray-900 g327 border rounded-lg shadow-md"
+          alt="hero"
+          src="./images/placeholder.png"
+        ></img>
+      </div>
+      <section className="text-gray-600 body-font">
+        <section className="text-gray-600 body-font">
+          <div className="container px-5 py-10 mx-auto">
+            <div className="flex flex-wrap -m-4 text-center">
+              <div className="p-4 sm:w-1/3 w-1/2">
+                <h2 className="title-font font-medium sm:text-5xl text-3xl text-white">
+                  <CountUp end={940} redraw={true}>
+                    {({ countUpRef, start }) => (
+                      <VisibilitySensor onChange={start} delayedCall>
+                        <span ref={countUpRef} />
+                      </VisibilitySensor>
+                    )}
+                  </CountUp>
+                </h2>
+                <p className="leading-relaxed">Users</p>
+              </div>
+              <div className="p-4 sm:w-1/3 w-1/2">
+                <h2 className="title-font font-medium sm:text-5xl text-3xl text-white">
+                  <CountUp end={740} redraw={true}>
+                    {({ countUpRef, start }) => (
+                      <VisibilitySensor onChange={start} delayedCall>
+                        <span ref={countUpRef} />
+                      </VisibilitySensor>
+                    )}
+                  </CountUp>
+                </h2>
+                <p className="leading-relaxed">Subscribes</p>
+              </div>
+              <div className="p-4 sm:w-1/3 w-1/2">
+                <h2 className="title-font font-medium sm:text-4xl text-3xl text-white">
+                  <CountUp end={315} redraw={true}>
+                    {({ countUpRef, start }) => (
+                      <VisibilitySensor onChange={start} delayedCall>
+                        <span ref={countUpRef} />
+                      </VisibilitySensor>
+                    )}
+                  </CountUp>
+                </h2>
+                <p className="leading-relaxed">Downloads</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div className="container px-5 py-24 mx-auto flex flex-wrap">
+          <div className="lg:w-1/2 w-full mb-10 lg:mb-0 rounded-lg overflow-hidden">
+            <img
+              alt="feature"
+              className="object-cover object-center h-full w-full"
+              src="./images/placeholder.png"
+            ></img>
+          </div>
+          <div className="flex flex-col flex-wrap lg:py-6 -mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
+            <div className="flex flex-col mb-10 lg:items-start items-center">
+              <div className="flex-grow">
+                <h2 className="text-white text-2xl title-font font-medium mb-3">
+                  Free
+                </h2>
+                <p className="leading-relaxed text-lg">
+                  All of our templates are 100% free forever.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col mb-10 lg:items-start items-center">
+              <div className="flex-grow">
+                <h2 className="text-white text-2xl title-font font-medium mb-3">
+                  Responsive
+                </h2>
+                <p className="leading-relaxed text-lg">
+                  All our templates come with full responsiveness straight out
+                  of the box.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col mb-10 lg:items-start items-center">
+              <div className="flex-grow">
+                <h2 className="text-white text-2xl title-font font-medium mb-3">
+                  SEO Friendly
+                </h2>
+                <p className="leading-relaxed text-lg">
+                  Our templates have the best SEO practices ensuring you get to
+                  the top.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col mb-10 lg:items-start items-center">
+              <div className="flex-grow">
+                <h2 className="text-white text-2xl title-font font-medium mb-3">
+                  Fast
+                </h2>
+                <p className="leading-relaxed text-lg">
+                  The fastest websites you can get.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col mb-10 lg:items-start items-center">
+              <div className="flex-grow">
+                <h2 className="text-white text-2xl title-font font-medium mb-3">
+                  Google Analytics Supported
+                </h2>
+                <p className="leading-relaxed text-lg">
+                  All our templates come with full support for Google Analytics.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="sm:text-5xl font-medium title-font text-white mb-4">
+              Our Team
+            </h2>
+            <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto text-gray-500s">
+              Here is our company
+            </p>
+            <div className="flex mt-6 justify-center">
+              <div className="w-16 h-1 rounded-full bg-white inline-flex"></div>
+            </div>
+            <div className="container px-5 py-16 mx-auto">
+              <div className="flex flex-wrap -m-4">
+                <div className="p-4 lg:w-1/4 md:w-1/2">
+                  <div className="h-full flex flex-col items-center text-center">
+                    <img
+                      alt="team"
+                      className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4"
+                      src="./images/placeholder.png"
+                    ></img>
+                    <div className="w-full">
+                      <h2 className="title-font font-medium text-lg text-white">
+                        Chris
+                      </h2>
+                      <h3 className="text-gray-500 mb-3">Web Developer</h3>
+                      <p className="mb-4">
+                        Chris is part of our front-end team providing amazing
+                        websites.
+                      </p>
+                      <span className="inline-flex">
+                        <a className="text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-white">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                          </svg>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 lg:w-1/4 md:w-1/2">
+                  <div className="h-full flex flex-col items-center text-center">
+                    <img
+                      alt="team"
+                      className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4"
+                      src="./images/placeholder.png"
+                    ></img>
+                    <div className="w-full">
+                      <h2 className="title-font font-medium text-lg text-white">
+                        Chris
+                      </h2>
+                      <h3 className="text-gray-500 mb-3">Web Developer</h3>
+                      <p className="mb-4">
+                        Chris is part of our front-end team providing amazing
+                        websites.
+                      </p>
+                      <span className="inline-flex">
+                        <a className="text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                          </svg>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 lg:w-1/4 md:w-1/2">
+                  <div className="h-full flex flex-col items-center text-center">
+                    <img
+                      alt="team"
+                      className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4"
+                      src="./images/placeholder.png"
+                    ></img>
+                    <div className="w-full">
+                      <h2 className="title-font font-medium text-lg text-white">
+                        Chris
+                      </h2>
+                      <h3 className="text-gray-500 mb-3">Web Developer</h3>
+                      <p className="mb-4">
+                        Chris is part of our front-end team providing amazing
+                        websites.
+                      </p>
+                      <span className="inline-flex">
+                        <a className="text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                          </svg>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 lg:w-1/4 md:w-1/2">
+                  <div className="h-full flex flex-col items-center text-center">
+                    <img
+                      alt="team"
+                      className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4"
+                      src="./images/placeholder.png"
+                    ></img>
+                    <div className="w-full">
+                      <h2 className="title-font font-medium text-lg text-white">
+                        Chris
+                      </h2>
+                      <h3 className="text-gray-500 mb-3">Web Developer</h3>
+                      <p className="mb-4">
+                        Chris is part of our front-end team providing amazing
+                        websites.
+                      </p>
+                      <span className="inline-flex">
+                        <a className="text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                          </svg>
+                        </a>
+                        <a className="ml-2 text-gray-500">
+                          <svg
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            className="w-5 h-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
+                          </svg>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
   );
 }

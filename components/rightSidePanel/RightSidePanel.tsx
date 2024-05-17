@@ -2,8 +2,12 @@
 import { useEffect, useRef, useState } from "react"
 import { fetchSvg } from "@/lib/actions/svg.actions";
 
+interface Params {
+    onSelect: (html: Element | null, filename: string) => void;
+    svgdata: any;
+}
 
-export default function RightSidePanel(svgdata: any) {
+export default function RightSidePanel({ svgdata, onSelect }: Params) {
     const [list, setList] = useState<Object[]>([])
 
     useEffect(() => {
@@ -13,19 +17,31 @@ export default function RightSidePanel(svgdata: any) {
 
     async function fetchRelatedSVG() {
         const data = await fetchSvg({ userId: '', icon: '' })
+        console.log(data, 'data123')
         setList(data)
+    }
+
+    async function handleSelect({ svg, filename }: { svg: string, filename: string }) {
+        let svgDoc = document.createElement("div");
+        svgDoc.innerHTML = svg;
+
+        const insvg = svgDoc?.querySelector(`.wrapper-svg`);
+        await onSelect(insvg, filename);
     }
 
     if (!list.length) return null
     return (
-        <>
-            {list.map((i) => {
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {[...list, ...list, ...list, ...list].map((i) => {
                 const html = { __html: i.svg };
                 return (
-                    <div className="sample_svg" key={i._id} dangerouslySetInnerHTML={html} />
+                    <div
+                        className="sample_svg flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
+                        key={i._id} dangerouslySetInnerHTML={html}
+                        onClick={() => handleSelect(i)} />
                 )
             })
             }
-        </>
+        </div>
     )
 }

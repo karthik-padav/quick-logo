@@ -23,12 +23,9 @@ interface Params {
   filename: string;
 }
 
-export async function updateSVG({
-  svg, filename
-}: Params): Promise<void> {
+export async function updateSVG({ svg, filename }: { svg: string; filename: string; }) {
   try {
-    connectToDB();
-
+    await connectToDB();
     await Svg.findOneAndUpdate(
       { svg },
       { filename },
@@ -41,8 +38,8 @@ export async function updateSVG({
 
 export async function fetchSvg({ userId, icon }: { userId: string, icon: string }) {
   try {
-    connectToDB();
-    const filter = { filename: 'AlignHorizontalSpaceBetweenIcon' };
+    await connectToDB();
+    const filter = { filename: 'AirplayIcon' };
     return await Svg.find({});
   } catch (error) {
     console.error("Error fetching SVG:", error);

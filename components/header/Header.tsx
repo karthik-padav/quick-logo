@@ -11,6 +11,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 
 export default function Header() {
@@ -19,10 +20,10 @@ export default function Header() {
     return (
         <header className="py-2 border-b flex flex-wrap gap-4 items-center justify-between w-full mx-auto">
             <nav className="container flex justify-between">
-                <div className="flex items-center">
+                <Link href="/" className="flex items-center">
                     <Zap className="mr-2 text-red-400" />
                     <h1 className="text-base-content text-lg font-bold">Quick Logo</h1>
-                </div>
+                </Link>
                 <div className="flex items-center">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
