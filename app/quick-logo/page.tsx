@@ -1,38 +1,10 @@
 "use client";
 
-import {
-  border,
-  borderRandiusChange,
-  downloadSvg,
-  shadow,
-  iconResize,
-  opacity,
-  processSVG,
-  rotate,
-  setBgColor,
-  sizeChange,
-  setColor,
-  controlList,
-  downloadPng,
-  _controler,
-  updateSVGControl,
-} from "@/lib/common";
+import { processSVG, _controler, updateSVGControl } from "@/lib/common";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCoffee } from "@fortawesome/free-solid-svg-icons";
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RgbaColorPicker } from "react-colorful";
-import { Button } from "@/components/ui/button";
 import DrawerWrapper from "@/components/drawerWrapper";
-import Controls from "@/components/controls";
-import {
-  ArrowDownToLine,
-  Plus,
-  AArrowDown,
-  AArrowUp,
-  ALargeSmall,
-} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -40,16 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import ColorPicker, { useColorPicker } from "react-best-gradient-color-picker";
+import ColorPicker from "react-best-gradient-color-picker";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import RightSidePanel from "@/components/rightSidePanel";
 
 export default function Home() {
