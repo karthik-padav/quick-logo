@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google"
+import { Inter as FontSans } from "next/font/google";
 
 import "./globals.css";
 
@@ -7,17 +7,16 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
 
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
+import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-})
-
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -33,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased flex flex-col justify-between",
           fontSans.variable
         )}
       >
@@ -45,9 +44,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <div className="container mx-auto py-8">
-            {children}
-          </div>
+          <div className="py-6">{children}</div>
           <Footer />
         </ThemeProvider>
       </body>

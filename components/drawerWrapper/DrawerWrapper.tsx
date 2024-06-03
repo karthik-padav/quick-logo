@@ -60,8 +60,8 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
     setList(
       paginationRef.current.originalList.slice(
         0,
-        MAX_COUNT * paginationRef.current.pagenumber,
-      ),
+        MAX_COUNT * paginationRef.current.pagenumber
+      )
     );
   }, []);
 
@@ -81,7 +81,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
       setList(
         paginationRef.current.originalList
           .filter((i) => i.toLowerCase().includes(inputValue.toLowerCase()))
-          .slice(0, MAX_COUNT * paginationRef.current?.pagenumber),
+          .slice(0, MAX_COUNT * paginationRef.current?.pagenumber)
       );
     }
   }
@@ -126,7 +126,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
       const svgContent = event?.target?.result;
       const svgElement = new DOMParser().parseFromString(
         svgContent,
-        "image/svg+xml",
+        "image/svg+xml"
       ).documentElement;
       const _filename = file?.name || "fast_logo.svg";
       onSelect(svgElement, _filename);
@@ -137,14 +137,14 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const { filename } = svgdata;
   return (
     <>
-      <div className=" mb-4 flex justify-between">
+      <div className="mb-4 flex justify-between">
         <div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
-                  className="p-2"
+                  className="p-2 hover:text-red-400"
                   onClick={() => setOpen(!open)}
                 >
                   <Plus />
@@ -158,8 +158,20 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" className="p-2 ml-2" onClick={() => { inputFileRef?.current?.click() }}>
-                  <input type="file" accept=".svg" onChange={handleFileChange} ref={inputFileRef} hidden />
+                <Button
+                  variant="outline"
+                  className="p-2 ml-2 hover:text-red-400"
+                  onClick={() => {
+                    inputFileRef?.current?.click();
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept=".svg"
+                    onChange={handleFileChange}
+                    ref={inputFileRef}
+                    hidden
+                  />
                   <Upload />
                 </Button>
               </TooltipTrigger>

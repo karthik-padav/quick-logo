@@ -53,10 +53,17 @@ import {
 import RightSidePanel from "@/components/rightSidePanel";
 
 export default function Home() {
-  const [svgdata, setSvgData] = useState<{ _svg: string, data: { id: string, color: string }[], filename: string, controler: any }>({ _svg: '', data: [], filename: '', controler: _controler() });
+  const [svgdata, setSvgData] = useState<{
+    _svg: string;
+    data: { id: string; color: string }[];
+    filename: string;
+    controler: any;
+  }>({ _svg: "", data: [], filename: "", controler: _controler() });
   const downloadableZoneRef = useRef<HTMLInputElement>(null);
-  const [color, setColor] = useState<string>("");
+  const downloadWrapperRef = useRef<HTMLInputElement>(null);
   const controlerRef = useRef<HTMLInputElement>(null);
+
+  const [color, setColor] = useState<string>("");
 
   function handleControler(value: string, id: string) {
     setSvgData((prev) => {
@@ -77,44 +84,17 @@ export default function Home() {
     });
   }
 
-  // useEffect(() => {
-  //   if (svgdata._svg)
-  //     updateSVGControl(controler, downloadableZoneRef)
-  // }, [controler])
-
   function selectedSVG(html: ReactNode, filename: string) {
     const { _svg, data } = processSVG(html);
     setSvgData({ _svg, data, filename, controler: _controler(_svg) });
   }
 
-  // useEffect(() => {
-  //   updateDimensions();
-  // }, [svgdata._svg])
-
-  // const updateDimensions = () => {
-  //   if (downloadableZoneRef.current) {
-  //     const { width } = downloadableZoneRef.current.getBoundingClientRect()
-  //     const e1 = document.getElementById('wrapper-svg');
-  //     e1?.setAttribute('width', `${width}px`)
-  //     e1?.setAttribute('height', `${width}px`)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   updateDimensions();
-  //   window.addEventListener('resize', updateDimensions);
-
-  //   return () => {
-  //     window.removeEventListener('resize', updateDimensions);
-  //   };
-  // }, [])
-
   const { controler, _svg } = svgdata;
   const html = { __html: _svg };
   return (
-    <main className="min-h-screen">
+    <main className="container">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="col-span-1">
+        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
           <Tabs defaultValue="icon" className="w-full">
             <TabsList className="w-full">
               <TabsTrigger className="w-full" value="icon">
@@ -129,19 +109,15 @@ export default function Home() {
                 <TabsContent
                   key={i}
                   value={i}
-                  className="p-4 rounded-lg bg-gray-100 dark:bg-gray-900 mt-4 md:min-h-96 "
+                  className="p-4 rounded-lg mt-4 md:min-h-96"
                 >
-                  <div ref={controlerRef}>
+                  <div>
                     {controler &&
                       Object.keys(controler)
                         .filter((key) => controler[key].tab === i)
                         .map((key) => {
-                          const {
-                            attr,
-                            label,
-                            valuePrefix,
-                            hideValue,
-                          } = controler[key];
+                          const { attr, label, valuePrefix, hideValue } =
+                            controler[key];
                           const { type, value, ...rest } = attr;
                           return (
                             <div key={key} className="mb-4">
@@ -189,9 +165,12 @@ export default function Home() {
           </Tabs>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 p-4 rounded-md bg-gray-100 dark:bg-gray-900">
           <DrawerWrapper onSelect={selectedSVG} svgdata={svgdata} />
-          <div className="p-10 w-full min-h-96 relative h-auto flex justify-center items-center dark:bg-gray-900 bg-gray-100 rounded-lg bg-[url('/grid.svg')]">
+          <div
+            ref={downloadWrapperRef}
+            className="p-10 w-full min-h-96 relative h-auto flex justify-center items-center dark:bg-gray-900 bg-gray-100 rounded-lg bg-[url('/grid.svg')]"
+          >
             {svgdata?._svg ? (
               <TooltipProvider>
                 <Tooltip>
@@ -218,7 +197,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div className="col-span-1">
+        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
           <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} />
         </div>
       </div>
