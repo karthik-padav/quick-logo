@@ -1,7 +1,7 @@
 "use clinet";
 import { Input } from "@/components/ui/input";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import * as icons from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { X, Plus, ArrowDownToLine, Upload } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
@@ -35,14 +35,17 @@ interface Params {
   onSelect: (html: Element | null, filename: string) => void;
   svgdata: any;
 }
+type SvgElementCollection = {
+  [key: string]: SVGElement;
+};
 
 export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const [open, setOpen] = useState<boolean>(false);
-  const svgRef = useRef<HTMLInputElement>(null);
+  const svgRef = useRef<SvgElementCollection | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const paginationRef = useRef<Pagination>({
     pagenumber: 1,
-    originalList: Object.keys(icons).filter((i) => i.includes("Icon")),
+    originalList: Object.keys(LucideIcons).filter((i) => i.includes("Icon")),
   });
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState<string[]>([]);
@@ -113,22 +116,37 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file: string | null = e?.target?.files[0];
+    const file: File | null = e?.target?.files?.[0] || null;
     const reader = new FileReader();
     reader.onload = function (event) {
       const svgContent: string | ArrayBuffer | null | undefined =
         event?.target?.result;
-      const svgElement = new DOMParser().parseFromString(
-        svgContent,
-        "image/svg+xml"
-      ).documentElement;
-      const _filename = file?.name || "fast_logo.svg";
-      onSelect(svgElement, _filename);
+      if (typeof svgContent === "string") {
+        const svgElement = new DOMParser().parseFromString(
+          svgContent,
+          "image/svg+xml"
+        ).documentElement;
+        const _filename = file?.name || "fast_logo.svg";
+        onSelect(svgElement, _filename);
+      }
     };
-    reader.readAsText(file);
+    if (file) reader.readAsText(file);
   };
 
   const { filename } = svgdata;
+  type IconKeys = keyof typeof LucideIcons;
+  type IconsObject = {
+    [key in IconKeys]: React.ComponentType<any>;
+  };
+
+  const icons = Object.keys(LucideIcons).reduce((acc, key) => {
+    const icon = LucideIcons[key as IconKeys];
+    if (typeof icon === "function" && icon.prototype?.isReactComponent) {
+      acc[key as IconKeys] = icon as React.ComponentType<any>;
+    }
+    return acc;
+  }, {} as IconsObject);
+
   return (
     <>
       <div className="mb-4 flex justify-between">
@@ -224,24 +242,22 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
             <div className="h-96 overflow-y-auto" onScroll={handleScroll}>
               <div className="grid grid-cols-8 md:grid-cols-12 gap-2">
                 {list.map((i) => {
-                  const Component = icons[i];
-                  if (Component?.render?.displayName)
-                    return (
-                      <div
-                        key={i}
-                        onClick={() => handleSelect(i)}
-                        className="flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
-                      >
-                        <Component
-                          ref={(e: React.ComponentType | null) =>
-                            svgRef?.current
-                              ? (svgRef.current[i] = e)
-                              : (svgRef.current = { [i]: e })
-                          }
-                        />
-                      </div>
-                    );
-                  return null;
+                  const Component = icons[i as IconKeys];
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => handleSelect(i)}
+                      className="flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
+                    >
+                      <Component
+                        ref={(e: SVGElement) => {
+                          svgRef?.current
+                            ? (svgRef.current[i] = e)
+                            : (svgRef.current = { [i]: e });
+                        }}
+                      />
+                    </div>
+                  );
                 })}
               </div>
             </div>

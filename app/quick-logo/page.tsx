@@ -25,7 +25,6 @@ export default function Home() {
   }>({ _svg: "", data: [], filename: "", controler: _controler() });
   const downloadableZoneRef = useRef<HTMLInputElement>(null);
   const downloadWrapperRef = useRef<HTMLInputElement>(null);
-  const controlerRef = useRef<HTMLInputElement>(null);
 
   const [color, setColor] = useState<string>("");
 
@@ -162,7 +161,7 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
-          <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} />
+          {/* <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} /> */}
         </div>
       </div>
     </main>

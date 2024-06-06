@@ -30,11 +30,13 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
     svg: string;
     filename: string;
   }) {
-    let svgDoc = document.createElement("div");
-    svgDoc.innerHTML = svg;
+    if (typeof document !== "undefined") {
+      let svgDoc = document.createElement("div");
+      svgDoc.innerHTML = svg;
 
-    const insvg = svgDoc?.querySelector(`.wrapper-svg`);
-    await onSelect(insvg, filename);
+      const insvg = svgDoc?.querySelector(`.wrapper-svg`);
+      await onSelect(insvg, filename);
+    }
   }
 
   if (!list.length) return null;

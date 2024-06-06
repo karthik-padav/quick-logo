@@ -8,6 +8,8 @@ const FOREIGN_OBJECT = "foreignObject";
 const FOREIGN_OBJECT_DIV = "foreignObjectDiv";
 
 export function processSVG(_svg: any) {
+  if (typeof document === "undefined") return { _svg: "", data: [] };
+
   let tempEl = document.createElement("div");
   tempEl.appendChild(_svg);
   if (tempEl.querySelector(`.${WRAPPER_SVG}`)) {
@@ -73,6 +75,7 @@ export function downloadPng({
   ext: string;
   svg: string;
 }) {
+  if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
   tempEl.innerHTML = svg;
   let element = tempEl.querySelector(`.${WRAPPER_SVG}`);
@@ -113,6 +116,7 @@ export function downloadSvg({
   ext: string;
   svg: string;
 }) {
+  if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
   tempEl.innerHTML = svg;
   let element = tempEl.querySelector(`.${WRAPPER_SVG}`);
@@ -148,6 +152,7 @@ export function getStyles(styles: string | null | undefined) {
 }
 
 export function _controler(svg: string = "") {
+  if (typeof document === "undefined") return {};
   let svgDoc = document.createElement("div");
   svgDoc.innerHTML = svg;
 

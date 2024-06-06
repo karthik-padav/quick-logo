@@ -22,7 +22,6 @@ export default function Header() {
     { code: "system", label: "System" },
   ];
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-  console.log(constants.list, "constants123");
   function renderList() {
     return (
       <>
