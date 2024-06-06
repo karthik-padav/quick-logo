@@ -152,38 +152,47 @@ export function getStyles(styles: string | null | undefined) {
 }
 
 export function _controler(svg: string = "") {
-  if (typeof document === "undefined") return {};
-  let svgDoc = document.createElement("div");
-  svgDoc.innerHTML = svg;
-
-  const insvg = svgDoc?.querySelector(`.${INNER_SVG}`);
-  const fbd = svgDoc?.querySelector(`.${FOREIGN_OBJECT_DIV}`);
-
-  const fobjStyles = fbd?.getAttribute("style");
-  const fObj = getStyles(fobjStyles);
-  const innerSvgStyles = insvg?.getAttribute("style");
-  const innerSvgStylesObj = getStyles(innerSvgStyles);
-  const iconSize = insvg?.getAttribute("width")?.replace("%", "") || 100;
-  const rotate =
-    insvg
-      ?.getAttribute("transform")
-      ?.replace("rotate", "")
-      ?.replace(")", "")
-      ?.replace("(", "") || 0;
-  const borderColor = insvg?.getAttribute("stroke") || "#000000";
-  const border = insvg?.getAttribute("stroke-width") || 1;
-  const fillColor = insvg?.getAttribute("fill") || "#ffffff";
-  const fillOpacity = insvg?.getAttribute("fill-opacity") || 1;
-  const bgColor =
-    fObj?.["background"] ||
+  let iconSize: string | number = 100;
+  let rotate: string | number = 0;
+  let border: string | number = 1;
+  let bgSize: string | number = 100;
+  let radius: string | number = 0;
+  let shadow: string = "0";
+  let borderColor: string = "#000000";
+  let bgColor: string =
     "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)";
-  const bgSize = fObj?.["width"]?.replace("%", "") || 100;
-  const radius = fObj?.["border-radius"]?.replace("px", "") || 0;
-  const shadow =
-    fObj?.["box-shadow"]
-      ?.split(" ")
-      .find((i: string) => i.includes("px"))
-      ?.replace("px", "") || "0";
+
+  if (typeof document !== "undefined") {
+    let svgDoc = document.createElement("div");
+    svgDoc.innerHTML = svg;
+
+    const insvg = svgDoc?.querySelector(`.${INNER_SVG}`);
+    const fbd = svgDoc?.querySelector(`.${FOREIGN_OBJECT_DIV}`);
+
+    const fobjStyles = fbd?.getAttribute("style");
+    const fObj = getStyles(fobjStyles);
+    const innerSvgStyles = insvg?.getAttribute("style");
+    const innerSvgStylesObj = getStyles(innerSvgStyles);
+    iconSize = insvg?.getAttribute("width")?.replace("%", "") || iconSize;
+    rotate =
+      insvg
+        ?.getAttribute("transform")
+        ?.replace("rotate", "")
+        ?.replace(")", "")
+        ?.replace("(", "") || rotate;
+    borderColor = insvg?.getAttribute("stroke") || borderColor;
+    border = insvg?.getAttribute("stroke-width") || border;
+    const fillColor = insvg?.getAttribute("fill") || "#ffffff";
+    const fillOpacity = insvg?.getAttribute("fill-opacity") || 1;
+    bgColor = fObj?.["background"] || bgColor;
+    bgSize = fObj?.["width"]?.replace("%", "") || bgSize;
+    radius = fObj?.["border-radius"]?.replace("px", "") || radius;
+    shadow =
+      fObj?.["box-shadow"]
+        ?.split(" ")
+        .find((i: string) => i.includes("px"))
+        ?.replace("px", "") || shadow;
+  }
   return {
     iconSize: {
       label: "Icon size",

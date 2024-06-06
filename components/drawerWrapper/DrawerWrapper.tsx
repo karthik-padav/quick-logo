@@ -35,14 +35,23 @@ interface Params {
   onSelect: (html: Element | null, filename: string) => void;
   svgdata: any;
 }
-type SvgElementCollection = {
-  [key: string]: SVGElement;
-};
+type SvgElementCollection = { [key: string]: SVGElement };
+type IconKeys = keyof typeof LucideIcons;
+type IconsObject = { [key in IconKeys]: React.ComponentType<any> | string };
 
 export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const [open, setOpen] = useState<boolean>(false);
   const svgRef = useRef<SvgElementCollection | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const iconsRef = useRef<IconsObject>(
+    Object.keys(LucideIcons).reduce((acc, key) => {
+      const icon = LucideIcons[key as IconKeys];
+      if (key.includes("Icon")) {
+        acc[key as IconKeys] = icon as React.ComponentType<any>;
+      }
+      return acc;
+    }, {} as IconsObject)
+  );
   const paginationRef = useRef<Pagination>({
     pagenumber: 1,
     originalList: Object.keys(LucideIcons).filter((i) => i.includes("Icon")),
@@ -134,18 +143,6 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   };
 
   const { filename } = svgdata;
-  type IconKeys = keyof typeof LucideIcons;
-  type IconsObject = {
-    [key in IconKeys]: React.ComponentType<any>;
-  };
-
-  const icons = Object.keys(LucideIcons).reduce((acc, key) => {
-    const icon = LucideIcons[key as IconKeys];
-    if (typeof icon === "function" && icon.prototype?.isReactComponent) {
-      acc[key as IconKeys] = icon as React.ComponentType<any>;
-    }
-    return acc;
-  }, {} as IconsObject);
 
   return (
     <>
@@ -242,7 +239,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
             <div className="h-96 overflow-y-auto" onScroll={handleScroll}>
               <div className="grid grid-cols-8 md:grid-cols-12 gap-2">
                 {list.map((i) => {
-                  const Component = icons[i as IconKeys];
+                  const Component = iconsRef.current[i as IconKeys];
                   return (
                     <div
                       key={i}

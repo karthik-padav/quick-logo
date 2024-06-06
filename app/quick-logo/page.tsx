@@ -1,5 +1,4 @@
 "use client";
-
 import { processSVG, _controler, updateSVGControl } from "@/lib/common";
 
 import { ReactNode, useRef, useState } from "react";
@@ -16,7 +15,7 @@ import ColorPicker from "react-best-gradient-color-picker";
 
 import RightSidePanel from "@/components/rightSidePanel";
 
-export default function Home() {
+export default function QuickLogo() {
   const [svgdata, setSvgData] = useState<{
     _svg: string;
     data: { id: string; color: string }[];
