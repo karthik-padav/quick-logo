@@ -48,7 +48,7 @@ export default function Home() {
     });
   }
 
-  function selectedSVG(html: ReactNode, filename: string) {
+  function selectedSVG(html: Element | null, filename: string) {
     const { _svg, data } = processSVG(html);
     setSvgData({ _svg, data, filename, controler: _controler(_svg) });
   }

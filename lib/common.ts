@@ -139,7 +139,7 @@ function generateFileName(filename: string = "") {
 }
 
 export function getStyles(styles: string | null | undefined) {
-  let obj: { [key: string]: any } = {};
+  let obj: { [key: string]: string } = {};
   styles?.split(";").forEach((i) => {
     const [key, v] = i.split(":");
     if (key && v) obj[key.trim()] = v.trim();
@@ -178,7 +178,7 @@ export function _controler(svg: string = "") {
     fObj?.["box-shadow"]
       ?.split(" ")
       .find((i: string) => i.includes("px"))
-      ?.replace("px", "") || 0;
+      ?.replace("px", "") || "0";
   return {
     iconSize: {
       label: "Icon size",

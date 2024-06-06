@@ -1,15 +1,6 @@
 "use clinet";
 import { Input } from "@/components/ui/input";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import * as icons from "lucide-react";
 import { X, Plus, ArrowDownToLine, Upload } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -41,7 +32,7 @@ interface Pagination {
 }
 
 interface Params {
-  onSelect: () => void;
+  onSelect: (html: Element | null, filename: string) => void;
   svgdata: any;
 }
 
@@ -74,7 +65,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   }
 
   function handleScroll(event: React.UIEvent<HTMLDivElement>) {
-    const target = event.target;
+    const target = event.target as HTMLElement;
     if (target.scrollHeight - target.scrollTop === target.clientHeight) {
       paginationRef.current.pagenumber =
         (paginationRef.current?.pagenumber || 0) + 1;
@@ -95,9 +86,11 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   }, [inputValue]);
 
   async function handleSelect(item: string) {
-    await onSelect(svgRef.current[item], `${item}`);
-    setOpen(false);
-    setInputValue("");
+    if (svgRef?.current) {
+      await onSelect(svgRef.current[item], `${item}`);
+      setOpen(false);
+      setInputValue("");
+    }
   }
 
   useEffect(() => {
@@ -120,10 +113,11 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e?.target?.files[0];
+    const file: string | null = e?.target?.files[0];
     const reader = new FileReader();
     reader.onload = function (event) {
-      const svgContent = event?.target?.result;
+      const svgContent: string | ArrayBuffer | null | undefined =
+        event?.target?.result;
       const svgElement = new DOMParser().parseFromString(
         svgContent,
         "image/svg+xml"
@@ -239,8 +233,8 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
                         className="flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
                       >
                         <Component
-                          ref={(e) =>
-                            svgRef.current
+                          ref={(e: React.ComponentType | null) =>
+                            svgRef?.current
                               ? (svgRef.current[i] = e)
                               : (svgRef.current = { [i]: e })
                           }
