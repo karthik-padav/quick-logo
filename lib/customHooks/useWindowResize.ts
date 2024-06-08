@@ -7,24 +7,25 @@ interface WindowSize {
 
 const useWindowSize = (): WindowSize => {
   const [windowSize, setWindowSize] = useState<WindowSize>({
-    windowWidth: window.innerWidth,
-    windowHeight: window.innerHeight,
+    windowWidth: 0,
+    windowHeight: 0,
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
-      });
-    };
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setWindowSize({
+          windowWidth: window.innerWidth,
+          windowHeight: window.innerHeight,
+        });
+      };
 
-    window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize);
 
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, []);
 
   return windowSize;

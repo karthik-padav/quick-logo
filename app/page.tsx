@@ -103,7 +103,7 @@ export default function Home() {
               className="w-full"
             >
               {constants.landingPage.howItWorks.map((item, index) => (
-                <AccordionItem value={`index_${index}`}>
+                <AccordionItem value={`index_${index}`} key={`index_${index}`}>
                   <AccordionTrigger className="text-left text-gray-600 dark:text-gray-300">
                     {item.title}
                   </AccordionTrigger>
@@ -127,7 +127,7 @@ export default function Home() {
               className="w-full"
             >
               {constants.landingPage.faq.map((item, index) => (
-                <AccordionItem value={`index_${index}`}>
+                <AccordionItem value={`index_${index}`} key={`index_${index}`}>
                   <AccordionTrigger className="text-left text-gray-600 dark:text-gray-300">
                     {item.q}
                   </AccordionTrigger>
