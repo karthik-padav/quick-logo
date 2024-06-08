@@ -30,13 +30,21 @@ export default function QuickLogo() {
   const downloadWrapperRef = useRef<HTMLInputElement>(null);
   const [bgColor, setBgColor] = useState<string>("");
   const [colorPickerWidth, setColorPickerWidth] = useState<number>(200);
+  const [svgWrapperWidth, setSvgWrapperWidth] = useState<number | string>(
+    "100%"
+  );
   const { windowWidth } = useWindowSize();
 
   useEffect(() => {
     const iconTabWrapper =
       controlerWrapperRef.current?.["icon"]?.getBoundingClientRect()?.width;
+    const downableWrapper =
+      downloadableZoneRef.current?.getBoundingClientRect()?.width;
+    console.log(downableWrapper, "svgWrapperWidth123");
     if (iconTabWrapper) setColorPickerWidth(iconTabWrapper);
+    if (downableWrapper) setSvgWrapperWidth(downableWrapper);
   }, [windowWidth]);
+
   function handleControler(value: string, id: string) {
     setSvgData((prev) => {
       let { controler, _svg, ...rest } = prev;
@@ -59,6 +67,9 @@ export default function QuickLogo() {
   function selectedSVG(html: Element | null, filename: string) {
     const { _svg, data } = processSVG(html);
     setSvgData({ _svg, data, filename, controler: _controler(_svg) });
+    const downableWrapper =
+      downloadableZoneRef.current?.getBoundingClientRect()?.width;
+    if (downableWrapper) setSvgWrapperWidth(downableWrapper);
   }
 
   const { controler, _svg } = svgdata;
@@ -164,32 +175,37 @@ export default function QuickLogo() {
             ref={downloadWrapperRef}
             className="p-2 md:p-10 w-full min-h-96 relative h-auto flex justify-center items-center rounded-lg"
           >
-            {svgdata?._svg ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div
-                      dangerouslySetInnerHTML={html}
-                      ref={downloadableZoneRef}
-                      className="w-full outline-2 outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25] flex justify-center items-center"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Downloadable Zone</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              <div className="w-full min-h-96 flex justify-center items-center outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25]">
-                <p>
-                  Press
-                  <span className="leading-1 text-white font-bold bg-red-400 rounded-lg border border-base-content/20 py-1 px-3 mx-1">
-                    <kbd>Ctrl + K</kbd>
-                  </span>
-                  to select icon
-                </p>
-              </div>
-            )}
+            <div className="w-full" ref={downloadableZoneRef}>
+              {svgdata?._svg ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        dangerouslySetInnerHTML={html}
+                        style={{ height: svgWrapperWidth }}
+                        className="w-full outline-2 outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25] flex justify-center items-center"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Downloadable Zone</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <div
+                  style={{ height: svgWrapperWidth }}
+                  className="w-full min-h-96 flex justify-center items-center outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25]"
+                >
+                  <p>
+                    Press
+                    <span className="leading-1 text-white font-bold bg-red-400 rounded-lg border border-base-content/20 py-1 px-3 mx-1">
+                      <kbd>Ctrl + K</kbd>
+                    </span>
+                    to select icon
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">

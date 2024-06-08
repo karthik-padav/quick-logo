@@ -25,8 +25,8 @@ export function processSVG(_svg: any) {
       });
     }
     let wrapper_svg = tempEl.querySelector(`.${WRAPPER_SVG}`);
-    wrapper_svg?.setAttribute("width", "400px");
-    wrapper_svg?.setAttribute("height", "400px");
+    wrapper_svg?.setAttribute("width", "100%");
+    wrapper_svg?.setAttribute("height", "100%");
 
     // let ediv = tempEl.querySelector(`.${INNER_SVG}`);
     // ediv?.setAttribute("width", "100%");
@@ -35,8 +35,8 @@ export function processSVG(_svg: any) {
   } else {
     let div = document.createElement("div");
     let wrapper_svg = document.createElement("svg");
-    wrapper_svg?.setAttribute("width", "400px");
-    wrapper_svg?.setAttribute("height", "400px");
+    wrapper_svg?.setAttribute("width", "100%");
+    wrapper_svg?.setAttribute("height", "100%");
     wrapper_svg?.setAttribute("class", WRAPPER_SVG);
     wrapper_svg?.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
@@ -159,6 +159,8 @@ export function _controler(svg: string = "") {
   let radius: string | number = 0;
   let shadow: string = "0";
   let borderColor: string = "#000000";
+  let fillColor: string = "#000000";
+  let fillOpacity: string | number = 1;
   let bgColor: string =
     "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)";
 
@@ -182,11 +184,11 @@ export function _controler(svg: string = "") {
         ?.replace("(", "") || rotate;
     borderColor = insvg?.getAttribute("stroke") || borderColor;
     border = insvg?.getAttribute("stroke-width") || border;
-    const fillColor = insvg?.getAttribute("fill") || "#ffffff";
-    const fillOpacity = insvg?.getAttribute("fill-opacity") || 1;
+    fillColor = insvg?.getAttribute("fill") || "#ffffff";
+    fillOpacity = insvg?.getAttribute("fill-opacity") || 1;
     bgColor = fObj?.["background"] || bgColor;
     bgSize = fObj?.["width"]?.replace("%", "") || bgSize;
-    radius = fObj?.["border-radius"]?.replace("px", "") || radius;
+    radius = fObj?.["border-radius"]?.replace("%", "") || radius;
     shadow =
       fObj?.["box-shadow"]
         ?.split(" ")
@@ -194,6 +196,37 @@ export function _controler(svg: string = "") {
         ?.replace("px", "") || shadow;
   }
   return {
+    borderColor: {
+      attr: {
+        value: borderColor,
+        type: "color",
+      },
+      label: "Border Color",
+      valuePrefix: "",
+      tab: "icon",
+    },
+    fillColor: {
+      attr: {
+        value: fillColor,
+        type: "color",
+      },
+      label: "Fill Color",
+      valuePrefix: "",
+      tab: "icon",
+    },
+    fillOpacity: {
+      label: "Fill Opacity",
+      valuePrefix: "%",
+      tab: "icon",
+      attr: {
+        type: "range",
+        min: 0,
+        max: 1,
+        value: fillOpacity,
+        step: 0.2,
+        className: "w-full slider dark:bg-accent bg-gray-200",
+      },
+    },
     iconSize: {
       label: "Icon size",
       valuePrefix: "%",
@@ -218,15 +251,6 @@ export function _controler(svg: string = "") {
       },
       label: "Rotate",
       valuePrefix: "deg",
-      tab: "icon",
-    },
-    borderColor: {
-      attr: {
-        value: borderColor,
-        type: "color",
-      },
-      label: "Border Color",
-      valuePrefix: "",
       tab: "icon",
     },
     border: {
@@ -271,12 +295,12 @@ export function _controler(svg: string = "") {
     },
     radius: {
       label: "Radius",
-      valuePrefix: "px",
+      valuePrefix: "%",
       tab: "bg",
       attr: {
         type: "range",
         min: 0,
-        max: 300,
+        max: 100,
         value: radius,
         step: 10,
         className: "w-full slider dark:bg-accent bg-gray-200",
@@ -326,13 +350,19 @@ export function updateSVGControl({
     case "borderColor":
       insvg?.setAttribute("stroke", value);
       break;
+    case "fillOpacity":
+      insvg?.setAttribute("fill-opacity", value);
+      break;
+    case "fillColor":
+      insvg?.setAttribute("fill", value);
+      break;
     case "bgColor":
     case "radius":
     case "bgSize":
     case "shadow":
       let fbdStyles = fbd?.getAttribute("style");
       let fbdObj = getStyles(fbdStyles);
-      if (key === "radius") fbdObj["border-radius"] = `${value}px`;
+      if (key === "radius") fbdObj["border-radius"] = `${value}%`;
       if (key === "bgColor") fbdObj["background"] = value;
       if (key === "bgSize") {
         fbdObj["width"] = `${value}%`;
