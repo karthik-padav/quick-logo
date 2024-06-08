@@ -16,7 +16,7 @@ const constants = {
     howItWorks: [
       {
         title: "Select or Upload an Icon",
-        desc: "Begin by selecting a pre-designed icon from our extensive library or upload your own unique image.",
+        desc: "Begin by selecting a pre-designed icon from our extensive library or upload your own unique SVG.",
       },
       {
         title: "Customize Your Design",
