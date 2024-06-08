@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { Moon, Sun, Zap, AlignJustify } from "lucide-react";
 import { useTheme } from "next-themes";

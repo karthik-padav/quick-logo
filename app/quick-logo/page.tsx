@@ -1,7 +1,7 @@
 "use client";
 import { processSVG, _controler, updateSVGControl } from "@/lib/common";
 
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DrawerWrapper from "@/components/drawerWrapper";
 import {
@@ -14,6 +14,7 @@ import {
 import ColorPicker from "react-best-gradient-color-picker";
 
 import RightSidePanel from "@/components/rightSidePanel";
+import useWindowSize from "@/lib/customHooks/useWindowResize";
 
 export default function QuickLogo() {
   const [svgdata, setSvgData] = useState<{
@@ -21,12 +22,21 @@ export default function QuickLogo() {
     data: { id: string; color: string }[];
     filename: string;
     controler: any;
-  }>({ _svg: "", data: [], filename: "", controler: _controler() });
+  }>(() => {
+    return { _svg: "", data: [], filename: "", controler: _controler() };
+  });
+  const controlerWrapperRef = useRef<{ [key: string]: HTMLDivElement }>({});
   const downloadableZoneRef = useRef<HTMLInputElement>(null);
   const downloadWrapperRef = useRef<HTMLInputElement>(null);
+  const [bgColor, setBgColor] = useState<string>("");
+  const [colorPickerWidth, setColorPickerWidth] = useState<number>(200);
+  const { windowWidth } = useWindowSize();
 
-  const [color, setColor] = useState<string>("");
-
+  useEffect(() => {
+    const iconTabWrapper =
+      controlerWrapperRef.current?.["icon"]?.getBoundingClientRect()?.width;
+    if (iconTabWrapper) setColorPickerWidth(iconTabWrapper);
+  }, [windowWidth]);
   function handleControler(value: string, id: string) {
     setSvgData((prev) => {
       let { controler, _svg, ...rest } = prev;
@@ -55,8 +65,8 @@ export default function QuickLogo() {
   const html = { __html: _svg };
   return (
     <main className="container">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-0 md:gap-4">
+        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 mb-4 md:mb-0">
           <Tabs defaultValue="icon" className="w-full">
             <TabsList className="w-full">
               <TabsTrigger className="w-full" value="icon">
@@ -82,7 +92,17 @@ export default function QuickLogo() {
                             controler[key];
                           const { type, value, ...rest } = attr;
                           return (
-                            <div key={key} className="mb-4">
+                            <div
+                              key={key}
+                              className="mb-4"
+                              ref={(e: HTMLDivElement) => {
+                                controlerWrapperRef?.current
+                                  ? (controlerWrapperRef.current[i] = e)
+                                  : (controlerWrapperRef.current = {
+                                      [key]: e,
+                                    });
+                              }}
+                            >
                               <p className="flex justify-between mb-1">
                                 {label}
                                 {!hideValue && (
@@ -95,17 +115,28 @@ export default function QuickLogo() {
                                 )}
                               </p>
                               {attr.type === "rgba_color" ? (
-                                <ColorPicker
-                                  {...rest}
-                                  width={200}
-                                  height={200}
-                                  id={key}
-                                  value={color}
-                                  onChange={async (color) => {
-                                    setColor(color);
-                                    await handleControler(color, key);
-                                  }}
-                                />
+                                <div className="relative">
+                                  {!svgdata?._svg && (
+                                    <div className="flex justify-center items-center absolute z-[9999] top-0 bottom-0 left-0 right-0 bg-white bg-opacity-25" />
+                                  )}
+                                  <ColorPicker
+                                    {...rest}
+                                    width={colorPickerWidth || 200}
+                                    height={colorPickerWidth || 200}
+                                    id={key}
+                                    value={
+                                      bgColor || svgdata?._svg
+                                        ? svgdata?.controler?.bgColor?.attr
+                                            ?.value
+                                        : ""
+                                    }
+                                    onChange={async (color) => {
+                                      setBgColor(color);
+                                      console.log(color, "color123");
+                                      await handleControler(color, key);
+                                    }}
+                                  />
+                                </div>
                               ) : (
                                 <input
                                   disabled={!svgdata?._svg}
@@ -127,11 +158,11 @@ export default function QuickLogo() {
           </Tabs>
         </div>
 
-        <div className="col-span-2 p-4 rounded-md bg-gray-100 dark:bg-gray-900">
+        <div className="col-span-2 p-4 rounded-md bg-gray-100 dark:bg-gray-900 bg-[url('/grid.svg')]">
           <DrawerWrapper onSelect={selectedSVG} svgdata={svgdata} />
           <div
             ref={downloadWrapperRef}
-            className="p-10 w-full min-h-96 relative h-auto flex justify-center items-center dark:bg-gray-900 bg-gray-100 rounded-lg bg-[url('/grid.svg')]"
+            className="p-2 md:p-10 w-full min-h-96 relative h-auto flex justify-center items-center rounded-lg"
           >
             {svgdata?._svg ? (
               <TooltipProvider>
@@ -149,13 +180,15 @@ export default function QuickLogo() {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <p>
-                Press
-                <span className="leading-1 text-white font-bold bg-red-400 rounded-lg border border-base-content/20 py-1 px-3 mx-1">
-                  <kbd>Ctrl + K</kbd>
-                </span>
-                to select icon
-              </p>
+              <div className="w-full min-h-96 flex justify-center items-center outline-dashed outline-[#9C92AC20] hover:outline-[#9C92AC50] bg-[#9C92AC15] hover:bg-[#9C92AC25]">
+                <p>
+                  Press
+                  <span className="leading-1 text-white font-bold bg-red-400 rounded-lg border border-base-content/20 py-1 px-3 mx-1">
+                    <kbd>Ctrl + K</kbd>
+                  </span>
+                  to select icon
+                </p>
+              </div>
             )}
           </div>
         </div>

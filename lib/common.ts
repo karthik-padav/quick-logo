@@ -28,9 +28,9 @@ export function processSVG(_svg: any) {
     wrapper_svg?.setAttribute("width", "400px");
     wrapper_svg?.setAttribute("height", "400px");
 
-    let ediv = tempEl.querySelector(`.${INNER_SVG}`);
-    ediv?.setAttribute("width", "100%");
-    ediv?.setAttribute("height", "100%");
+    // let ediv = tempEl.querySelector(`.${INNER_SVG}`);
+    // ediv?.setAttribute("width", "100%");
+    // ediv?.setAttribute("height", "100%");
     return { _svg: tempEl.innerHTML, data };
   } else {
     let div = document.createElement("div");

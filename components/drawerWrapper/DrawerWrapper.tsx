@@ -219,7 +219,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
       </div>
       <Drawer open={open} onOpenChange={setOpen} onClose={onClose}>
         <DrawerContent>
-          <div className="container py-2">
+          <div className="container py-2 z-[99999]">
             <div className="flex justify-between items-center">
               <h3 className="text-base-content text-lg font-bold">
                 Pick an icon
