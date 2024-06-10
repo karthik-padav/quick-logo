@@ -24,7 +24,7 @@ export default function Header() {
   function renderList() {
     return (
       <>
-        {constants.list.map((item) => (
+        {constants.headerMenuList.map((item) => (
           <Link
             key={item.code}
             className="md:mr-6 md:inline md:py-0 py-2 block hover:text-red-400"
@@ -45,7 +45,9 @@ export default function Header() {
             className="flex items-center text-gray-600 dark:text-gray-300"
           >
             <Zap className="mr-2 text-red-400" />
-            <h1 className="text-base-content text-lg font-bold">Quick Logo</h1>
+            <h1 className="text-base-content text-lg font-bold">
+              {process.env.NEXT_PUBLIC_WEBSITE_NAME}
+            </h1>
           </Link>
           <div className="flex items-center">
             <nav className="text-base justify-center font-semibold md:block hidden text-gray-600 dark:text-gray-300">
@@ -90,17 +92,6 @@ export default function Header() {
           </nav>
         )}
       </div>
-    </header>
-  );
-  return (
-    <header className="py-2 border-b flex flex-wrap gap-4 items-center justify-between w-full mx-auto">
-      <nav className="container flex justify-between">
-        <Link href="/" className="flex items-center">
-          <Zap className="mr-2 text-red-400" />
-          <h1 className="text-base-content text-lg font-bold">Quick Logo</h1>
-        </Link>
-        <div className="flex items-center"></div>
-      </nav>
     </header>
   );
 }

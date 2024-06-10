@@ -8,11 +8,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Image from "next/image";
 
 export default function Home() {
   const { theme } = useTheme();
   return (
-    <div className="text-black body-font">
+    <main className="text-black body-font">
       <section className="container flex flex-col justify-center min-h-[75vh] mx-auto">
         <div className="text-center">
           <h1 className="text-gray-600 dark:text-white text-4xl font-bold tracking-tighter lg:text-8xl md:text-7xl text-center">
@@ -60,13 +61,14 @@ export default function Home() {
 
       <section className="container pb-10 md:pb-20">
         <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
-          <div className="flex justify-center items-center">
-            <img
-              className="object-cover object-center w-full rounded-lg"
-              alt="quick logo banner"
+          <div className="flex w-full justify-center items-center">
+            <Image
+              alt={`${process.env.NEXT_PUBLIC_WEBSITE_NAME} banner`}
               src={`/images/${
                 theme === "dark" ? "dark-banner" : "light-banner"
               }.png`}
+              width={500}
+              height={500}
             />
           </div>
           <div className="py-6 flex justify-center items-center">
@@ -79,7 +81,7 @@ export default function Home() {
                   <p className="text-gray-600 text-lg md:text-xl dark:text-white font-bold">
                     {item.title}:
                   </p>
-                  <p className="text-sm text-lg text-gray-600 dark:text-gray-300">
+                  <p className="text-lg text-gray-600 dark:text-gray-300">
                     {item.desc}
                   </p>
                 </li>
@@ -140,6 +142,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

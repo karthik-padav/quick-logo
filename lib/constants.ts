@@ -1,8 +1,19 @@
 const constants = {
-  list: [
+  headerMenuList: [
     { code: "HOME", title: "Home", href: "/" },
     { code: "QUICK_LOGO", title: "Create", href: "/quick-logo" },
-    { code: "ABOUT", title: "About", href: "/about" },
+  ],
+  footerLegalList: [
+    {
+      code: "TERMS_AND_CONDITIONS",
+      title: "Terms And Conditions",
+      href: "/terms-and-conditions",
+    },
+    {
+      code: "PRIVACY_POLICY",
+      title: "Privacy Policy",
+      href: "/privacy-policy",
+    },
   ],
   landingPage: {
     title: "Create Stunning Logos In Seconds",
@@ -10,7 +21,7 @@ const constants = {
     detailed_desc: [
       "Simple to create and personalize.",
       "Design a stunning logo in minutes.",
-      "Effortless logo creation with Quick Logo.",
+      `Effortless logo creation with ${process.env.NEXT_PUBLIC_WEBSITE_NAME}.`,
       "Obtain a high-quality logo for download and use on websites, social media, print, and branding.",
     ],
     howItWorks: [
@@ -34,29 +45,29 @@ const constants = {
     detailedList: [
       {
         title: "Simple to create and personalize",
-        desc: " Quick Logo makes it easy for anyone to design a unique and professional logo, regardless of design experience.",
+        desc: `${process.env.NEXT_PUBLIC_WEBSITE_NAME} makes it easy for anyone to design a unique and professional logo, regardless of design experience.`,
       },
       {
         title: "Design a stunning logo in minutes",
         desc: " Our intuitive platform allows you to craft beautiful logos quickly, saving you time and effort.",
       },
       {
-        title: "Effortless logo creation with Quick Logo",
-        desc: " Choose from a wide selection of icons or upload your own, then customize with colors, gradients, and sizes.",
+        title: `Effortless logo creation with ${process.env.NEXT_PUBLIC_WEBSITE_NAME}`,
+        desc: "Choose from a wide selection of icons or upload your own, then customize with colors, gradients, and sizes.",
       },
       {
         title: "Obtain a high-quality logo for download",
-        desc: " Export your logo in SVG or PNG formats, perfect for websites, social media, print, and branding.",
+        desc: "Export your logo in SVG or PNG formats, perfect for websites, social media, print, and branding.",
       },
       {
         title: "Perfect for all uses",
-        desc: " Whether you need a logo for your business, personal project, or event, Quick Logo provides the quality and flexibility you need.",
+        desc: `Whether you need a logo for your business, personal project, or event, ${process.env.NEXT_PUBLIC_WEBSITE_NAME} provides the quality and flexibility you need.`,
       },
     ],
     faq: [
       {
-        q: "Do I need any design experience to use Quick Logo?",
-        a: "No, Quick Logo is designed for users of all skill levels. Our intuitive interface and easy-to-use tools make it simple for anyone to create a professional logo.",
+        q: `Do I need any design experience to use ${process.env.NEXT_PUBLIC_WEBSITE_NAME}?`,
+        a: `No, ${process.env.NEXT_PUBLIC_WEBSITE_NAME} is designed for users of all skill levels. Our intuitive interface and easy-to-use tools make it simple for anyone to create a professional logo.`,
       },
 
       {
@@ -71,7 +82,7 @@ const constants = {
 
       {
         q: "Is there a limit to the number of logos I can create?",
-        a: "No, there are no limits on the number of logos you can create and download with Quick Logo.",
+        a: `No, there are no limits on the number of logos you can create and download with ${process.env.NEXT_PUBLIC_WEBSITE_NAME}.`,
       },
 
       {
