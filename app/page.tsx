@@ -14,9 +14,9 @@ export default function Home() {
   const { theme } = useTheme();
   return (
     <main className="text-black body-font">
-      <section className="container flex flex-col justify-center min-h-[75vh] mx-auto">
+      <section className="container flex flex-col justify-center min-h-[75vh] mx-auto py-10 md:py-20">
         <div className="text-center">
-          <h1 className="text-gray-600 dark:text-white text-4xl font-bold tracking-tighter lg:text-8xl md:text-7xl text-center">
+          <h1 className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text text-4xl font-bold tracking-tighter lg:text-8xl md:text-7xl text-center">
             {constants.landingPage.title}
           </h1>
           <p className="mx-auto mt-6 text-lg md:text-xl font-normal leading-relaxed text-gray-600 dark:text-gray-300 lg:w-2/3 text-center">
@@ -67,12 +67,12 @@ export default function Home() {
               src={`/images/${
                 theme === "dark" ? "dark-banner" : "light-banner"
               }.png`}
-              width={500}
-              height={500}
+              width={1500}
+              height={1500}
             />
           </div>
           <div className="py-6 flex justify-center items-center">
-            <ul className="list-disc pl-4">
+            <ul className="list-disc pl-4 text-gray-600 dark:text-white">
               {constants.landingPage.detailedList.map((item, index) => (
                 <li
                   className="mb-2 md:mb-4 leading-relaxed text-lg"
@@ -81,7 +81,7 @@ export default function Home() {
                   <p className="text-gray-600 text-lg md:text-xl dark:text-white font-bold">
                     {item.title}:
                   </p>
-                  <p className="text-lg text-gray-600 dark:text-gray-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {item.desc}
                   </p>
                 </li>
