@@ -65,7 +65,7 @@ export default function Home() {
             <Image
               alt={`${process.env.NEXT_PUBLIC_WEBSITE_NAME} banner`}
               src={`/images/${
-                theme === "dark" ? "dark-banner" : "light-banner"
+                theme === "light" ? "light-banner" : "dark-banner"
               }.png`}
               width={1500}
               height={1500}

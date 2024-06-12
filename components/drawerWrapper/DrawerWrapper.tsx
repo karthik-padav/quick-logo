@@ -19,8 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -143,7 +141,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   };
 
   const { filename } = svgdata;
-
+  console.log(svgdata, "svgdata123");
   return (
     <>
       <div className="mb-4 flex justify-between">

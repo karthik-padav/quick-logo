@@ -12,6 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import constants from "@/lib/constants";
+import dynamic from "next/dynamic";
+import { signOut, useSession } from "next-auth/react";
+
+const LoginPopup = dynamic(() => import("@/components/loginPopup"), {
+  ssr: false,
+});
 
 export default function Header() {
   const { setTheme } = useTheme();
@@ -21,6 +27,8 @@ export default function Header() {
     { code: "system", label: "System" },
   ];
   const [navbarOpen, setNavbarOpen] = React.useState(false);
+  const session = useSession();
+  console.log(session, "session123123");
   function renderList() {
     return (
       <>
@@ -84,6 +92,11 @@ export default function Header() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <LoginPopup />
+            <Button onClick={() => signOut({ callbackUrl: "/" })}>
+              signOut
+            </Button>
           </div>
         </div>
         {navbarOpen && (

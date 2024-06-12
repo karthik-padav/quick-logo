@@ -40,7 +40,6 @@ export default function QuickLogo() {
       controlerWrapperRef.current?.["icon"]?.getBoundingClientRect()?.width;
     const downableWrapper =
       downloadableZoneRef.current?.getBoundingClientRect()?.width;
-    console.log(downableWrapper, "svgWrapperWidth123");
     if (iconTabWrapper) setColorPickerWidth(iconTabWrapper);
     if (downableWrapper) setSvgWrapperWidth(downableWrapper);
   }, [windowWidth]);
@@ -209,7 +208,7 @@ export default function QuickLogo() {
           </div>
         </div>
         <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
-          {/* <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} /> */}
+          <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} />
         </div>
       </div>
     </main>
