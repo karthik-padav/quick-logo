@@ -41,12 +41,12 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
 
   if (!list.length) return null;
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      {[...list].map((i: ListItem) => {
+    <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
+      {list.map((i: ListItem) => {
         const html = { __html: i.svg };
         return (
           <div
-            className="sample_svg flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
+            className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
             key={i._id}
             dangerouslySetInnerHTML={html}
             onClick={() => handleSelect(i)}

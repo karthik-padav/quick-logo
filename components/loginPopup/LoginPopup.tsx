@@ -15,34 +15,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
+import { useAppProvider } from "@/components/app-provider";
+import { Google, Wine } from "@/assets/icons";
 
-interface LoginPopupProps {
-  onClose: () => void;
-}
-
-export default async function LoginPopup() {
+export default function LoginPopup() {
   async function signinHandler(type: string) {
     const resp = await signIn(type, { redirect: false });
-
-    // const session = await auth();
-    // console.log(session, "session123");
     console.log("123321");
-    // console.log(resp, "resp123123");
   }
+
+  function setIsDialogOpen() {}
+  const { showLogin, toggleLogin } = useAppProvider();
+
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Share</Button>
-        </DialogTrigger>
+      <Dialog open={showLogin} onOpenChange={toggleLogin}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Share link</DialogTitle>
+            <DialogTitle>Sign In</DialogTitle>
             <DialogDescription>
-              Anyone who has this link will be able to view this.
+              Join Figma for free design tools, templates, and more.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center space-x-2">
+          <div className="">
             <Button
               onClick={() => {
                 signinHandler("github");
@@ -51,28 +46,15 @@ export default async function LoginPopup() {
             >
               Sign in with GitHub
             </Button>
-
-            <div className="grid flex-1 gap-2">
-              <Label htmlFor="link" className="sr-only">
-                Link
-              </Label>
-              <Input
-                id="link"
-                defaultValue="https://ui.shadcn.com/docs/installation"
-                readOnly
-              />
-            </div>
-            <Button type="submit" size="sm" className="px-3">
-              Copy
+            <Button
+              onClick={() => {
+                signinHandler("google");
+              }}
+              variant="secondary"
+            >
+              Sign in with Google
             </Button>
           </div>
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { updateSVG, fetchSvg } from "./actions/svg.actions";
+import { findUser } from "./actions/user.actions";
 
 const MAX_WIDTH = "800";
 const WRAPPER_SVG = "wrapper-svg";
@@ -162,7 +163,7 @@ export function _controler(svg: string = "") {
   let fillColor: string = "#000000";
   let fillOpacity: string | number = 1;
   let bgColor: string =
-    "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)";
+    "linear-gradient(45deg, rgba(245,45,1,0.59) 0%, RGBA(252, 242, 1, 0.61) 100%)";
 
   if (typeof document !== "undefined") {
     let svgDoc = document.createElement("div");
@@ -192,8 +193,8 @@ export function _controler(svg: string = "") {
     shadow =
       fObj?.["box-shadow"]
         ?.split(" ")
-        .find((i: string) => i.includes("px"))
-        ?.replace("px", "") || shadow;
+        .find((i: string) => i.includes("em"))
+        ?.replace("em", "") || shadow;
   }
   return {
     borderColor: {
@@ -308,14 +309,14 @@ export function _controler(svg: string = "") {
     },
     shadow: {
       label: "Shadow",
-      valuePrefix: "px",
+      valuePrefix: "em",
       tab: "bg",
       attr: {
         type: "range",
         min: 0,
-        max: 12,
+        max: 1.6,
         value: parseInt(shadow),
-        step: 2,
+        step: 0.4,
         className: "w-full slider dark:bg-accent bg-gray-200",
       },
     },
@@ -371,7 +372,7 @@ export function updateSVGControl({
       if (key === "shadow")
         fbdObj[
           "box-shadow"
-        ] = `0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.2), 0 ${value}px ${value}px 0 rgba(0, 0, 0, 0.19)`;
+        ] = `0 ${value}em ${value}em 0 rgba(0, 0, 0, 0.2), 0 ${value}em ${value}em 0 rgba(0, 0, 0, 0.19)`;
 
       let _styles = "";
       Object.keys(fbdObj).forEach(

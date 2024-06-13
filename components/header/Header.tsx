@@ -1,6 +1,13 @@
 "use client";
 import * as React from "react";
-import { Moon, Sun, Zap, AlignJustify } from "lucide-react";
+import {
+  Moon,
+  Sun,
+  Zap,
+  AlignJustify,
+  LaptopMinimal,
+  Settings,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -14,21 +21,38 @@ import Link from "next/link";
 import constants from "@/lib/constants";
 import dynamic from "next/dynamic";
 import { signOut, useSession } from "next-auth/react";
-
-const LoginPopup = dynamic(() => import("@/components/loginPopup"), {
-  ssr: false,
-});
+import { useAppProvider } from "@/components/app-provider";
 
 export default function Header() {
   const { setTheme } = useTheme();
   const themes = [
-    { code: "light", label: "Light" },
-    { code: "dark", label: "Dark" },
-    { code: "system", label: "System" },
+    {
+      code: "light",
+      label: "Light",
+      icon: (
+        <Sun className="h-[1rem] w-[1rem] rotate-0 scale-100 transition-all" />
+      ),
+    },
+    {
+      code: "dark",
+      label: "Dark",
+      icon: (
+        <Moon className="h-[1rem] w-[1rem] rotate-0 scale-100 transition-all" />
+      ),
+    },
+    {
+      code: "system",
+      label: "System",
+      icon: (
+        <LaptopMinimal className="h-[1rem] w-[1rem] rotate-0 scale-100 transition-all" />
+      ),
+    },
   ];
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const session = useSession();
+  const { toggleLogin } = useAppProvider();
   console.log(session, "session123123");
+
   function renderList() {
     return (
       <>
@@ -47,7 +71,7 @@ export default function Header() {
   return (
     <header className="text-white body-font">
       <div className="container mx-auto p-5">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <Link
             href="/"
             className="flex items-center text-gray-600 dark:text-gray-300"
@@ -71,32 +95,61 @@ export default function Header() {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="text-accent-foreground hover:text-red-400"
-                >
-                  <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
+                {session?.data?.user?.image ? (
+                  <div className="text-accent-foreground rounded-full h-10 w-10 border overflow-hidden">
+                    <img
+                      alt={`Profile Picture`}
+                      src={`${session.data.user.image}`}
+                    />
+                  </div>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-accent-foreground hover:text-red-400 rounded-full"
+                  >
+                    <Settings className="h-[1.3rem] w-[1.3rem] rotate-0 scale-100 transition-all" />
+                  </Button>
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {themes.map((item) => (
-                  <DropdownMenuItem
-                    key={item.code}
-                    onClick={() => setTheme(item.code)}
-                  >
-                    {item.label}
-                  </DropdownMenuItem>
-                ))}
+                {session.data?.user && (
+                  <>
+                    <div className="px-2 py-1.5">
+                      <p className="text-md">{session.data.user.name}</p>
+                      <p className="text-xs">{session.data.user.email}</p>
+                    </div>
+                    <hr className="my-2" />
+                  </>
+                )}
+                <>
+                  <p className="px-2 py-1.5 text-sm">Theme</p>
+                  {themes.map((item) => (
+                    <DropdownMenuItem
+                      key={item.code}
+                      onClick={() => setTheme(item.code)}
+                    >
+                      {item.icon}{" "}
+                      <span className="ml-2 text-sm">{item.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </>
+                <hr className="my-2" />
+                <>
+                  {session?.data ? (
+                    <DropdownMenuItem
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                    >
+                      <span className="ml-2 text-sm"> Sign Out</span>
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem onClick={toggleLogin}>
+                      <span className="ml-2 text-sm"> Sign In</span>
+                    </DropdownMenuItem>
+                  )}
+                </>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <LoginPopup />
-            <Button onClick={() => signOut({ callbackUrl: "/" })}>
-              signOut
-            </Button>
           </div>
         </div>
         {navbarOpen && (

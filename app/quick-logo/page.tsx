@@ -168,7 +168,7 @@ export default function QuickLogo() {
           </Tabs>
         </div>
 
-        <div className="col-span-2 p-4 rounded-md bg-gray-100 dark:bg-gray-900 bg-[url('/grid.svg')]">
+        <div className="col-span-2 p-4 rounded-md bg-gray-100 dark:bg-gray-900 mb-4 md:mb-0 bg-[url('/grid.svg')]">
           <DrawerWrapper onSelect={selectedSVG} svgdata={svgdata} />
           <div
             ref={downloadWrapperRef}

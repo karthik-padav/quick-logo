@@ -12,9 +12,10 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import { AppProvider } from "@/components/app-provider";
+import LoginPopup from "@/components/loginPopup";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -41,19 +42,22 @@ export default async function RootLayout({
           fontSans.variable
         )}
       >
-        <SessionProvider session={session}>
-          <Toaster />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Header />
-            <div className="py-6">{children}</div>
-            <Footer />
-          </ThemeProvider>
-        </SessionProvider>
+        <AppProvider>
+          <SessionProvider session={session}>
+            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
+              <div className="py-6">{children}</div>
+              <LoginPopup />
+              <Footer />
+            </ThemeProvider>
+          </SessionProvider>
+        </AppProvider>
       </body>
     </html>
   );
