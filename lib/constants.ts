@@ -1,7 +1,29 @@
+import { Google, Github, Facebook } from "@/assets/icons";
+
 const constants = {
   headerMenuList: [
     { code: "HOME", title: "Home", href: "/" },
     { code: "QUICK_LOGO", title: "Create", href: "/quick-logo" },
+  ],
+  loginProvider: [
+    {
+      code: "google",
+      labelPrefix: "Sign in with ",
+      label: "Google",
+      icon: Google,
+    },
+    {
+      code: "facebook",
+      labelPrefix: "Sign in with ",
+      label: "Facebook",
+      icon: Facebook,
+    },
+    {
+      code: "github",
+      labelPrefix: "Sign in with ",
+      label: "GitHub",
+      icon: Github,
+    },
   ],
   footerLegalList: [
     {

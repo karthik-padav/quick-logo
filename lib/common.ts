@@ -71,10 +71,12 @@ export function downloadPng({
   filename,
   ext,
   svg,
+  key,
 }: {
   filename: string;
   ext: string;
   svg: string;
+  key: string;
 }) {
   if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
@@ -98,7 +100,7 @@ export function downloadPng({
       link.download = generateFileName(`${filename}.${ext}`);
       link.href = dataUrl;
       link.click();
-      updateSVG({ svg: element?.outerHTML, filename });
+      updateSVG({ svg: element?.outerHTML, filename, key });
     };
 
     // Set the image source to a data URL representing the SVG content
@@ -108,14 +110,31 @@ export function downloadPng({
   }
 }
 
+export function generateKey({
+  controler,
+  filename,
+}: {
+  controler: any;
+  filename: string;
+}) {
+  console.log(controler, "obj123");
+  let key = `filename:${filename}`;
+  for (const k of Object.keys(controler).sort((a, b) => a.localeCompare(b))) {
+    key = `${key}+${k}:${controler[k].attr.value}`;
+  }
+  return key.replaceAll(" ", "*");
+}
+
 export function downloadSvg({
   filename,
   ext,
   svg,
+  key,
 }: {
   filename: string;
   ext: string;
   svg: string;
+  key: string;
 }) {
   if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
@@ -135,7 +154,7 @@ export function downloadSvg({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    updateSVG({ svg: element?.outerHTML, filename });
+    updateSVG({ svg: element?.outerHTML, filename, key });
   }
 }
 

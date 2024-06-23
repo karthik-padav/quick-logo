@@ -25,7 +25,7 @@ export default function Home() {
 
           <Link
             href="/quick-logo"
-            className="mt-14 px-6 inline-block text-accent-foreground hover:bg-red-500 bg-red-400 text-white px-2 py-3 rounded-lg"
+            className="mt-14 px-6 py-3 inline-block text-accent-foreground hover:bg-red-500 bg-red-400 text-white rounded-lg"
           >
             Generate Logo
           </Link>

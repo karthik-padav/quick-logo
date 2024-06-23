@@ -14,13 +14,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { downloadPng, downloadSvg } from "@/lib/common";
+import { downloadPng, downloadSvg, generateKey } from "@/lib/common";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSession } from "next-auth/react";
+import { useAppProvider } from "@/components/app-provider";
 
 const MAX_COUNT = 100;
 
@@ -56,6 +58,9 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   });
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState<string[]>([]);
+  const session = useSession();
+  const { toggleLogin } = useAppProvider();
+  console.log(session, "session123123");
 
   useEffect(() => {
     setList(
@@ -141,7 +146,6 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   };
 
   const { filename } = svgdata;
-  console.log(svgdata, "svgdata123");
   return (
     <>
       <div className="mb-4 flex justify-between">
@@ -199,14 +203,34 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
             <DropdownMenuContent>
               <DropdownMenuItem
                 onClick={() =>
-                  downloadSvg({ filename, ext: "svg", svg: svgdata?._svg })
+                  session.data?.user || true
+                    ? downloadSvg({
+                        filename,
+                        ext: "svg",
+                        svg: svgdata?._svg,
+                        key: generateKey({
+                          controler: svgdata.controler,
+                          filename,
+                        }),
+                      })
+                    : toggleLogin()
                 }
               >
                 Download SVG
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  downloadPng({ filename, ext: "png", svg: svgdata?._svg })
+                  session.data?.user || true
+                    ? downloadPng({
+                        filename,
+                        ext: "png",
+                        svg: svgdata?._svg,
+                        key: generateKey({
+                          controler: svgdata.controler,
+                          filename,
+                        }),
+                      })
+                    : toggleLogin()
                 }
               >
                 Download PNG

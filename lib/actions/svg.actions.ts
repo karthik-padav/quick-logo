@@ -1,21 +1,9 @@
 "use server";
 
 import Svg from "../models/svg.model";
+import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
-
-// export async function fetchUser(userId: string) {
-//   try {
-//     connectToDB();
-
-//     return await Svg.findOne({ id: userId }).populate({
-//       path: "communities",
-//       model: Community,
-//     });
-//   } catch (error: any) {
-//     throw new Error(`Failed to fetch user: ${error.message}`);
-//   }
-// }
 
 interface Params {
   svg: string;
@@ -25,13 +13,23 @@ interface Params {
 export async function updateSVG({
   svg,
   filename,
+  key,
 }: {
   svg: string | undefined;
   filename: string;
+  key: string;
 }) {
   try {
     await connectToDB();
-    await Svg.findOneAndUpdate({ svg }, { filename }, { upsert: true });
+    const _svg = await Svg.findOneAndUpdate(
+      { svg_id: key },
+      { filename, svg },
+      { upsert: true, returnDocument: "after" }
+    );
+    console.log(_svg?._id, "_svg123");
+    // await User.findByIdAndUpdate(author, {
+    //   $push: { threads: createdThread._id },
+    // });
   } catch (error: any) {
     throw new Error(`Failed to create/update: ${error.message}`);
   }

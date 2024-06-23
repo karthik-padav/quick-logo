@@ -15,8 +15,8 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
   const [list, setList] = useState<ListItem[]>([]);
 
   useEffect(() => {
-    if (svgdata._svg) fetchRelatedSVG();
-  }, [svgdata._svg]);
+    if (svgdata.filename) fetchRelatedSVG();
+  }, [svgdata.filename]);
 
   async function fetchRelatedSVG() {
     const data = await fetchSvg({ userId: "", icon: "" });
