@@ -45,10 +45,11 @@ export default async function RootLayout({
         )}
       >
         <Script
+          id="gtm-script"
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ANALYTICS}`}
         />
-        <Script>
+        <Script id="gtm-script-2">
           {`  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
