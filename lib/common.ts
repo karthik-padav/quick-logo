@@ -72,11 +72,15 @@ export function downloadPng({
   ext,
   svg,
   key,
+  session,
+  source,
 }: {
   filename: string;
   ext: string;
   svg: string;
   key: string;
+  source: string;
+  session: any;
 }) {
   if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
@@ -100,7 +104,13 @@ export function downloadPng({
       link.download = generateFileName(`${filename}.${ext}`);
       link.href = dataUrl;
       link.click();
-      updateSVG({ svg: element?.outerHTML, filename, key });
+      updateSVG({
+        svg: element?.outerHTML,
+        filename,
+        key,
+        source,
+        email: session?.data?.user?.email,
+      });
     };
 
     // Set the image source to a data URL representing the SVG content
@@ -113,12 +123,14 @@ export function downloadPng({
 export function generateKey({
   controler,
   filename,
+  source,
 }: {
   controler: any;
   filename: string;
+  source: string;
 }) {
-  console.log(controler, "obj123");
   let key = `filename:${filename}`;
+  if (source) key = `${key}+source:${source}`;
   for (const k of Object.keys(controler).sort((a, b) => a.localeCompare(b))) {
     key = `${key}+${k}:${controler[k].attr.value}`;
   }
@@ -130,11 +142,15 @@ export function downloadSvg({
   ext,
   svg,
   key,
+  session,
+  source,
 }: {
   filename: string;
   ext: string;
   svg: string;
   key: string;
+  source: string;
+  session: any;
 }) {
   if (typeof document === "undefined") return;
   let tempEl = document.createElement("div");
@@ -154,7 +170,13 @@ export function downloadSvg({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    updateSVG({ svg: element?.outerHTML, filename, key });
+    updateSVG({
+      svg: element?.outerHTML,
+      filename,
+      key,
+      source,
+      email: session?.data?.user?.email,
+    });
   }
 }
 

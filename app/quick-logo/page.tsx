@@ -1,7 +1,7 @@
 "use client";
 import { processSVG, _controler, updateSVGControl } from "@/lib/common";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DrawerWrapper from "@/components/drawerWrapper";
 import {
@@ -21,9 +21,16 @@ export default function QuickLogo() {
     _svg: string;
     data: { id: string; color: string }[];
     filename: string;
+    source: string;
     controler: any;
   }>(() => {
-    return { _svg: "", data: [], filename: "", controler: _controler() };
+    return {
+      _svg: "",
+      data: [],
+      filename: "",
+      source: "",
+      controler: _controler(),
+    };
   });
   const controlerWrapperRef = useRef<{ [key: string]: HTMLDivElement }>({});
   const downloadableZoneRef = useRef<HTMLInputElement>(null);
@@ -63,9 +70,18 @@ export default function QuickLogo() {
     });
   }
 
-  function selectedSVG(html: Element | null, filename: string) {
+  function selectedSVG({
+    html = null,
+    filename = "",
+    source = "",
+  }: {
+    html: Element | null;
+    filename: string;
+    source: string;
+  }) {
+    console.log(source, "source123");
     const { _svg, data } = processSVG(html);
-    setSvgData({ _svg, data, filename, controler: _controler(_svg) });
+    setSvgData({ _svg, data, filename, controler: _controler(_svg), source });
     const downableWrapper =
       downloadableZoneRef.current?.getBoundingClientRect()?.width;
     if (downableWrapper) setSvgWrapperWidth(downableWrapper);
@@ -207,7 +223,7 @@ export default function QuickLogo() {
             </div>
           </div>
         </div>
-        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 ">
+        <div className="col-span-1">
           <RightSidePanel svgdata={svgdata} onSelect={selectedSVG} />
         </div>
       </div>

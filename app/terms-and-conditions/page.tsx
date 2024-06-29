@@ -84,9 +84,6 @@ export default function About() {
         </p>
         <ul className="list-disc">
           <li className="text-lg text-gray-600 dark:text-gray-300">
-            Republish material from {process.env.NEXT_PUBLIC_WEBSITE_NAME}
-          </li>
-          <li className="text-lg text-gray-600 dark:text-gray-300">
             Sell, rent or sub-license material from{" "}
             {process.env.NEXT_PUBLIC_WEBSITE_NAME}
           </li>

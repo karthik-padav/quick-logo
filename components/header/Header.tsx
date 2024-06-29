@@ -51,7 +51,6 @@ export default function Header() {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const session = useSession();
   const { toggleLogin } = useAppProvider();
-  console.log(session, "session123123");
 
   function renderList() {
     return (

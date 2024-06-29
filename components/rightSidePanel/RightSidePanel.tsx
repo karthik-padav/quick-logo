@@ -1,58 +1,145 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchSvg } from "@/lib/actions/svg.actions";
+import { useSession } from "next-auth/react";
 
 interface Params {
-  onSelect: (html: Element | null, filename: string) => void;
+  onSelect: (params: {
+    html: Element | null;
+    filename: string;
+    source: string;
+  }) => void;
   svgdata: any;
 }
-interface ListItem {
-  _id: string;
-  svg: string;
-  filename: string;
+interface svgListItem {
+  data: {
+    _id: string;
+    svg: string;
+    filename: string;
+    source: string;
+  }[];
+  loader: boolean;
 }
 
 export default function RightSidePanel({ svgdata, onSelect }: Params) {
-  const [list, setList] = useState<ListItem[]>([]);
+  const [mySvg, setMySvg] = useState<svgListItem>({
+    data: [],
+    loader: false,
+  });
+  const [similarSvg, setSimilarSvg] = useState<svgListItem>({
+    data: [],
+    loader: false,
+  });
+  const session = useSession();
+
+  useEffect(() => {
+    fetchMySVG();
+  }, []);
 
   useEffect(() => {
     if (svgdata.filename) fetchRelatedSVG();
   }, [svgdata.filename]);
 
   async function fetchRelatedSVG() {
-    const data = await fetchSvg({ userId: "", icon: "" });
-    setList(data);
+    setSimilarSvg((prev) => ({ ...prev, loader: true }));
+    const data = await fetchSvg({
+      filename: svgdata.filename,
+    });
+    setSimilarSvg({ data, loader: false });
+  }
+
+  async function fetchMySVG() {
+    setMySvg((prev) => ({ ...prev, loader: true }));
+    const data = await fetchSvg({
+      svgIds: session?.data?.user?.svgs,
+    });
+    setMySvg({ data, loader: false });
   }
 
   async function handleSelect({
     svg,
     filename,
+    source = "",
   }: {
     svg: string;
     filename: string;
+    source: string;
   }) {
     if (typeof document !== "undefined") {
       let svgDoc = document.createElement("div");
       svgDoc.innerHTML = svg;
 
       const insvg = svgDoc?.querySelector(`.wrapper-svg`);
-      await onSelect(insvg, filename);
+      await onSelect({ html: insvg, filename, source });
     }
   }
-
-  if (!list.length) return null;
   return (
-    <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
-      {list.map((i: ListItem) => {
-        const html = { __html: i.svg };
-        return (
-          <div
-            className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
-            key={i._id}
-            dangerouslySetInnerHTML={html}
-            onClick={() => handleSelect(i)}
-          />
-        );
-      })}
-    </div>
+    <>
+      {mySvg?.data?.length > 0 && (
+        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900">
+          <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 font-bold">
+            Downloads
+          </p>
+          <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
+            {mySvg.loader
+              ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+                  <div key={i} className="animate-pulse space-x-4">
+                    <div className="bg-gray-200 dark:bg-gray-800 rounded-md dark:hover:bg-gray-900 max-h-full h-16 max-w-full w-20" />
+                  </div>
+                ))
+              : (mySvg?.data || []).map(
+                  (i: {
+                    _id: string;
+                    svg: string;
+                    filename: string;
+                    source: string;
+                  }) => {
+                    const html = { __html: i.svg };
+                    return (
+                      <div
+                        className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
+                        key={i._id}
+                        dangerouslySetInnerHTML={html}
+                        onClick={() => handleSelect(i)}
+                      />
+                    );
+                  }
+                )}
+          </div>
+        </div>
+      )}
+      {similarSvg?.data?.length > 0 && (
+        <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900 mt-4">
+          <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 font-bold">
+            Similar Icons
+          </p>
+          <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
+            {similarSvg.loader
+              ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+                  <div key={i} className="animate-pulse space-x-4">
+                    <div className="bg-gray-200 dark:bg-gray-800 rounded-md dark:hover:bg-gray-900 max-h-full h-16 max-w-full w-20" />
+                  </div>
+                ))
+              : (similarSvg?.data || []).map(
+                  (i: {
+                    _id: string;
+                    svg: string;
+                    filename: string;
+                    source: string;
+                  }) => {
+                    const html = { __html: i.svg };
+                    return (
+                      <div
+                        className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
+                        key={i._id}
+                        dangerouslySetInnerHTML={html}
+                        onClick={() => handleSelect(i)}
+                      />
+                    );
+                  }
+                )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

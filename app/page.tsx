@@ -1,6 +1,4 @@
-"use client";
 import constants from "@/lib/constants";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
   Accordion,
@@ -8,10 +6,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Image from "next/image";
+import { getSvgCount } from "@/lib/actions/svg.actions";
+import { getUserCount } from "@/lib/actions/user.actions";
+import CounterUpWrapper from "@/components/counterUpWrapper";
+import ImageWrapper from "@/components/imageWrapper";
 
-export default function Home() {
-  const { theme } = useTheme();
+export default async function Home() {
+  const userCount = await getUserCount();
+  const svgCount = await getSvgCount();
+
   return (
     <main className="text-black body-font">
       <section className="container flex flex-col justify-center min-h-[75vh] mx-auto py-10 md:py-20">
@@ -30,31 +33,8 @@ export default function Home() {
             Generate Logo
           </Link>
 
-          <div className="grid grid-cols-3 gap-8 text-center pt-14">
-            <div>
-              <p className="title-font font-medium md:text-5xl text-3xl text-gray-600 dark:text-white">
-                100+
-              </p>
-              <p className="leading-relaxed text-lg pt-4 text-gray-600 dark:text-gray-300">
-                Users
-              </p>
-            </div>
-            <div>
-              <p className="title-font font-medium md:text-5xl text-3xl text-gray-600 dark:text-white">
-                300+
-              </p>
-              <p className="leading-relaxed text-lg pt-4 text-gray-600 dark:text-gray-300">
-                Subscribes
-              </p>
-            </div>
-            <div>
-              <p className="title-font font-medium md:text-5xl text-3xl text-gray-600 dark:text-white">
-                1000+
-              </p>
-              <p className="leading-relaxed text-lg pt-4 text-gray-600 dark:text-gray-300">
-                Downloads
-              </p>
-            </div>
+          <div className="grid grid-cols-2 gap-8 text-center pt-14">
+            <CounterUpWrapper userCount={userCount} svgCount={svgCount} />
           </div>
         </div>
       </section>
@@ -62,14 +42,7 @@ export default function Home() {
       <section className="container pb-10 md:pb-20">
         <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
           <div className="flex w-full justify-center items-center">
-            <Image
-              alt={`${process.env.NEXT_PUBLIC_WEBSITE_NAME} banner`}
-              src={`/images/${
-                theme === "light" ? "light-banner" : "dark-banner"
-              }.png`}
-              width={1500}
-              height={1500}
-            />
+            <ImageWrapper />
           </div>
           <div className="py-6 flex justify-center items-center">
             <ul className="list-disc pl-4 text-gray-600 dark:text-white">

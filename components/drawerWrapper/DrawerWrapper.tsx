@@ -32,7 +32,11 @@ interface Pagination {
 }
 
 interface Params {
-  onSelect: (html: Element | null, filename: string) => void;
+  onSelect: (params: {
+    html: Element | null;
+    filename: string;
+    source: string;
+  }) => void;
   svgdata: any;
 }
 type SvgElementCollection = { [key: string]: SVGElement };
@@ -60,7 +64,6 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const [list, setList] = useState<string[]>([]);
   const session = useSession();
   const { toggleLogin } = useAppProvider();
-  console.log(session, "session123123");
 
   useEffect(() => {
     setList(
@@ -100,9 +103,15 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
     return () => clearTimeout(db);
   }, [inputValue]);
 
-  async function handleSelect(item: string) {
+  async function handleSelect({
+    svg,
+    source,
+  }: {
+    svg: string;
+    source: string;
+  }) {
     if (svgRef?.current) {
-      await onSelect(svgRef.current[item], `${item}`);
+      await onSelect({ html: svgRef.current[svg], filename: svg, source });
       setOpen(false);
       setInputValue("");
     }
@@ -139,7 +148,7 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
           "image/svg+xml"
         ).documentElement;
         const _filename = file?.name || "fast_logo.svg";
-        onSelect(svgElement, _filename);
+        onSelect({ html: svgElement, filename: _filename, source: "user" });
       }
     };
     if (file) reader.readAsText(file);
@@ -203,15 +212,18 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
             <DropdownMenuContent>
               <DropdownMenuItem
                 onClick={() =>
-                  session.data?.user || true
+                  session.data?.user
                     ? downloadSvg({
                         filename,
                         ext: "svg",
                         svg: svgdata?._svg,
+                        source: svgdata?.source,
                         key: generateKey({
                           controler: svgdata.controler,
                           filename,
+                          source: svgdata?.source,
                         }),
+                        session,
                       })
                     : toggleLogin()
                 }
@@ -220,15 +232,18 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  session.data?.user || true
+                  session.data?.user
                     ? downloadPng({
                         filename,
                         ext: "png",
                         svg: svgdata?._svg,
+                        source: svgdata?.source,
                         key: generateKey({
                           controler: svgdata.controler,
                           filename,
+                          source: svgdata?.source,
                         }),
+                        session,
                       })
                     : toggleLogin()
                 }
@@ -262,10 +277,11 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
               <div className="grid grid-cols-8 md:grid-cols-12 gap-2">
                 {list.map((i) => {
                   const Component = iconsRef.current[i as IconKeys];
+                  const source = "lucide";
                   return (
                     <div
                       key={i}
-                      onClick={() => handleSelect(i)}
+                      onClick={() => handleSelect({ svg: i, source })}
                       className="flex justify-center p-2 items-center rounded-md hover:bg-gray-200 bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
                     >
                       <Component
