@@ -121,7 +121,8 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
     function handleKeydown(event: KeyboardEvent) {
       if (event.ctrlKey && event.keyCode === 75) {
         event.preventDefault();
-        setOpen(true);
+        if (session.data?.user) setOpen(true);
+        else toggleLogin();
       }
     }
     window.addEventListener("keydown", handleKeydown);
@@ -165,7 +166,9 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
                 <Button
                   variant="outline"
                   className="p-2 hover:text-red-400"
-                  onClick={() => setOpen(!open)}
+                  onClick={() =>
+                    session.data?.user ? setOpen(!open) : toggleLogin()
+                  }
                 >
                   <Plus />
                 </Button>
@@ -182,7 +185,9 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
                   variant="outline"
                   className="p-2 ml-2 hover:text-red-400"
                   onClick={() => {
-                    inputFileRef?.current?.click();
+                    session.data?.user
+                      ? inputFileRef?.current?.click()
+                      : toggleLogin();
                   }}
                 >
                   <input

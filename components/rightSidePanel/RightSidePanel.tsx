@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchSvg } from "@/lib/actions/svg.actions";
 import { useSession } from "next-auth/react";
+import { useAppProvider } from "@/components/app-provider";
 
 interface Params {
   onSelect: (params: {
@@ -30,7 +31,7 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
     loader: false,
   });
   const session = useSession();
-
+  const { toggleLogin } = useAppProvider();
   useEffect(() => {
     fetchMySVG();
   }, []);
@@ -99,7 +100,9 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
                         className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
                         key={i._id}
                         dangerouslySetInnerHTML={html}
-                        onClick={() => handleSelect(i)}
+                        onClick={() => {
+                          session.data?.user ? handleSelect(i) : toggleLogin();
+                        }}
                       />
                     );
                   }
@@ -132,7 +135,9 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
                         className="sample_svg flex justify-center p-2 items-center rounded-md bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-900 cursor-pointer"
                         key={i._id}
                         dangerouslySetInnerHTML={html}
-                        onClick={() => handleSelect(i)}
+                        onClick={() => {
+                          session.data?.user ? handleSelect(i) : toggleLogin();
+                        }}
                       />
                     );
                   }
