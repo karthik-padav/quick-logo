@@ -49,10 +49,10 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
 
   async function fetchMySVG() {
     setMySvg((prev) => ({ ...prev, loader: true }));
-    const data = await fetchSvg({
-      svgIds: session?.data?.user?.svgs,
-    });
-    setMySvg({ data, loader: false });
+    // const data = await fetchSvg({
+    //   svgIds: session?.data?.user?.svgs,
+    // });
+    // setMySvg({ data, loader: false });
   }
 
   async function handleSelect({
