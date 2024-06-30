@@ -49,11 +49,13 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
   }
 
   async function fetchMySVG() {
-    setMySvg((prev) => ({ ...prev, loader: true }));
-    // const data = await fetchSvg({
-    //   svgIds: session?.data?.user?.svgs,
-    // });
-    // setMySvg({ data, loader: false });
+    // if (session?.data?.user?.svgs?.length) {
+    //   setMySvg((prev) => ({ ...prev, loader: true }));
+    //   const data = await fetchSvg({
+    //     svgIds: session?.data?.user?.svgs,
+    //   });
+    //   setMySvg({ data, loader: false });
+    // }
   }
 
   async function handleSelect({
@@ -78,7 +80,7 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
       {mySvg?.data?.length > 0 && (
         <div className="col-span-1 p-4 rounded-md bg-gray-100 dark:bg-gray-900">
           <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 font-bold">
-            Downloads
+            My Downloads
           </p>
           <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
             {mySvg.loader

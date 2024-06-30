@@ -59,7 +59,7 @@ export async function fetchSvg({
     if (filename) filter["filename"] = filename;
     if (svgIds?.length)
       filter["_id"] = { $in: svgIds.map((i) => new ObjectId(i)) };
-    console.log(filter, "filename123");
+    console.log(filter, "filter123");
     return await Svg.find(filter);
   } catch (error) {
     console.error("Error fetching SVG:", error);

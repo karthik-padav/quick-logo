@@ -4,7 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/lib/db";
-import { fetchSvg } from "@/lib/actions/svg.actions";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

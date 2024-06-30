@@ -38,7 +38,7 @@ const constants = {
     },
   ],
   landingPage: {
-    title: "Create Stunning Logos In Seconds",
+    title: "Create Stunning Logo In Seconds",
     subtitle: "Design Your Perfect Logo Instantly - No Design Skills Required!",
     detailed_desc: [
       "Simple to create and personalize.",
