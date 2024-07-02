@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { fetchSvg } from "@/lib/actions/svg.actions";
 import { useSession } from "next-auth/react";
 import { useAppProvider } from "@/components/app-provider";
+import { User } from "next-auth";
+import { Session } from "next-auth";
+
+interface ExtendedSession extends Session {
+  user: ExtendedUser;
+}
+
+interface ExtendedUser extends User {
+  svgs: string[];
+}
 
 interface Params {
   onSelect: (params: {
@@ -11,6 +21,7 @@ interface Params {
   }) => void;
   svgdata: any;
 }
+
 interface svgListItem {
   data: {
     _id: string;
@@ -30,7 +41,8 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
     data: [],
     loader: false,
   });
-  const session = useSession();
+
+  const { data: session } = useSession() as { data: ExtendedSession | null };
   const { toggleLogin } = useAppProvider();
   useEffect(() => {
     fetchMySVG();
@@ -49,13 +61,13 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
   }
 
   async function fetchMySVG() {
-    // if (session?.data?.user?.svgs?.length) {
-    //   setMySvg((prev) => ({ ...prev, loader: true }));
-    //   const data = await fetchSvg({
-    //     svgIds: session?.data?.user?.svgs,
-    //   });
-    //   setMySvg({ data, loader: false });
-    // }
+    if (session?.user?.svgs?.length) {
+      setMySvg((prev) => ({ ...prev, loader: true }));
+      const data = await fetchSvg({
+        svgIds: session?.user?.svgs,
+      });
+      setMySvg({ data, loader: false });
+    }
   }
 
   async function handleSelect({
@@ -103,7 +115,7 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
                         key={i._id}
                         dangerouslySetInnerHTML={html}
                         onClick={() => {
-                          session.data?.user ? handleSelect(i) : toggleLogin();
+                          session?.user ? handleSelect(i) : toggleLogin();
                         }}
                       />
                     );
@@ -138,7 +150,7 @@ export default function RightSidePanel({ svgdata, onSelect }: Params) {
                         key={i._id}
                         dangerouslySetInnerHTML={html}
                         onClick={() => {
-                          session.data?.user ? handleSelect(i) : toggleLogin();
+                          session?.user ? handleSelect(i) : toggleLogin();
                         }}
                       />
                     );

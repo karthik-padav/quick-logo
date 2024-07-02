@@ -12,12 +12,12 @@ const constants = {
       label: "Google",
       icon: Google,
     },
-    {
-      code: "facebook",
-      labelPrefix: "Sign in with ",
-      label: "Facebook",
-      icon: Facebook,
-    },
+    // {
+    //   code: "facebook",
+    //   labelPrefix: "Sign in with ",
+    //   label: "Facebook",
+    //   icon: Facebook,
+    // },
     {
       code: "github",
       labelPrefix: "Sign in with ",
@@ -38,6 +38,7 @@ const constants = {
     },
   ],
   landingPage: {
+    login_title: `Join ${process.env.NEXT_PUBLIC_WEBSITE_NAME} To Create Stunning Logo In Seconds`,
     title: "Create Stunning Logo In Seconds",
     subtitle: "Design Your Perfect Logo Instantly - No Design Skills Required!",
     detailed_desc: [

@@ -30,13 +30,13 @@ export default function LoginPopup() {
           <DialogHeader>
             <DialogTitle>Sign In</DialogTitle>
             <DialogDescription>
-              Join Figma for free design tools, templates, and more.
+              {constants.landingPage.login_title}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {constants.loginProvider?.map((item) => (
               <Button
-                className={`text-accent-foreground hover:bg-red-500 bg-red-400 text-white px-2 py-3 rounded-lg ${
+                className={`text-accent-foreground  px-2 py-3 rounded-lg ${
                   loader && "cursor-not-allowed"
                 }`}
                 key={item.code}
