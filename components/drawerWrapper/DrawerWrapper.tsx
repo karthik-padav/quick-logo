@@ -24,7 +24,7 @@ import {
 import { useSession } from "next-auth/react";
 import { useAppProvider } from "@/components/app-provider";
 
-const MAX_COUNT = 100;
+const MAX_COUNT = 300;
 
 interface Pagination {
   pagenumber: number;
@@ -47,10 +47,15 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   const [open, setOpen] = useState<boolean>(false);
   const svgRef = useRef<SvgElementCollection | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const isReactComponent = (key: string) => {
+    const icon: any = LucideIcons[key as IconKeys];
+    return typeof icon === "object" && icon?.render && key.includes("Icon");
+  };
+
   const iconsRef = useRef<IconsObject>(
     Object.keys(LucideIcons).reduce((acc, key) => {
       const icon = LucideIcons[key as IconKeys];
-      if (key.includes("Icon")) {
+      if (isReactComponent(key)) {
         acc[key as IconKeys] = icon as React.ComponentType<any>;
       }
       return acc;
@@ -58,7 +63,9 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
   );
   const paginationRef = useRef<Pagination>({
     pagenumber: 1,
-    originalList: Object.keys(LucideIcons).filter((i) => i.includes("Icon")),
+    originalList: Object.keys(LucideIcons).filter((key) =>
+      isReactComponent(key)
+    ),
   });
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState<string[]>([]);
@@ -278,8 +285,8 @@ export default function DrawerWrapper({ onSelect, svgdata }: Params) {
                 onChange={(e) => setInputValue(e.target.value)}
               />
             </div>
-            <div className="h-96 overflow-y-auto" onScroll={handleScroll}>
-              <div className="grid grid-cols-8 md:grid-cols-12 gap-2">
+            <div className="h-[70vh] overflow-y-auto" onScroll={handleScroll}>
+              <div className="grid grid-cols-6 md:grid-cols-12 gap-2">
                 {list.map((i) => {
                   const Component = iconsRef.current[i as IconKeys];
                   const source = "lucide";
