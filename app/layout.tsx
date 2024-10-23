@@ -35,7 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  console.log(session, "session123");
+  console.log(process.env.GOOGLE_ANALYTICS, "process.env.GOOGLE_ANALYTICS");
   return (
     <html lang="en">
       <body
@@ -45,17 +45,23 @@ export default async function RootLayout({
         )}
       >
         <Script
-          id="gtm-script"
           strategy="afterInteractive"
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ANALYTICS}`}
         />
-        <Script id="gtm-script-2">
-          {`  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', ${process.env.GOOGLE_ANALYTICS})`}
-        </Script>
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.GOOGLE_ANALYTICS}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
         <AppProvider>
           <SessionProvider session={session}>
             <Toaster />
