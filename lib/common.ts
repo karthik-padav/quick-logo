@@ -427,3 +427,11 @@ export function updateSVGControl({
   }
   return new XMLSerializer().serializeToString(svgDoc);
 }
+
+export async function getWebsiteData() {
+  const response = await fetch(
+    "https://raw.githubusercontent.com/karthik-padav/public-data/refs/heads/main/upssp.json"
+  );
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  return await response.json();
+}
