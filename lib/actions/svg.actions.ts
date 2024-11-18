@@ -26,7 +26,6 @@ export async function updateSVG({
 }) {
   try {
     await connectToDB();
-    console.log({ filename, source }, "asdasdasd");
     const _svg = await Svg.findOneAndUpdate(
       { svg_id: key },
       { filename, svg, source },
@@ -54,12 +53,10 @@ export async function fetchSvg({
 }) {
   try {
     await connectToDB();
-    console.log("fetching svg icons...");
     let filter: { [key: string]: any } = {};
     if (filename) filter["filename"] = filename;
     if (svgIds?.length)
       filter["_id"] = { $in: svgIds.map((i) => new ObjectId(i)) };
-    console.log(filter, "filter123");
     return await Svg.find(filter);
   } catch (error) {
     console.error("Error fetching SVG:", error);
