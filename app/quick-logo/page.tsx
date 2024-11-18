@@ -79,7 +79,6 @@ export default function QuickLogo() {
     filename: string;
     source: string;
   }) {
-    console.log(source, "source123");
     const { _svg, data } = processSVG(html);
     setSvgData({ _svg, data, filename, controler: _controler(_svg), source });
     const downableWrapper =
@@ -158,7 +157,6 @@ export default function QuickLogo() {
                                     }
                                     onChange={async (color) => {
                                       setBgColor(color);
-                                      console.log(color, "color123");
                                       await handleControler(color, key);
                                     }}
                                   />
