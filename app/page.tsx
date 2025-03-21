@@ -9,7 +9,7 @@ import {
 import { getSvgCount } from "@/lib/actions/svg.actions";
 import { getUserCount } from "@/lib/actions/user.actions";
 import CounterUpWrapper from "@/components/counterUpWrapper";
-import ImageWrapper from "@/components/imageWrapper";
+import Image from "next/image";
 
 export default async function Home() {
   const userCount = await getUserCount();
@@ -42,7 +42,22 @@ export default async function Home() {
       <section className="container pb-10 md:pb-20">
         <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
           <div className="flex w-full justify-center items-center">
-            <ImageWrapper />
+            <div className="relative">
+              <Image
+                alt={`${process.env.NEXT_PUBLIC_WEBSITE_NAME} banner`}
+                src="/images/light-banner.png"
+                width={1500}
+                height={1500}
+                className="dark:hidden"
+              />
+              <Image
+                alt={`${process.env.NEXT_PUBLIC_WEBSITE_NAME} banner`}
+                src="/images/dark-banner.png"
+                width={1500}
+                height={1500}
+                className="dark:block hidden"
+              />
+            </div>
           </div>
           <div className="py-6 flex justify-center items-center">
             <ul className="list-disc pl-4 text-gray-600 dark:text-white">
