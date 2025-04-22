@@ -3,6 +3,10 @@ import { Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer({ data }: any) {
+  const products = data.ourProducts.find(
+    (item: { code: string }) => item.code === "IMAGE_FLEX_STUDIO"
+  );
+
   return (
     <footer className="py-4 w-full mx-auto border-t-2">
       <div className="container">
@@ -18,7 +22,7 @@ export default function Footer({ data }: any) {
               </h1>
             </Link>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Copyright © 2024 - All rights reserved
+              Copyright © {new Date().getFullYear()} - All rights reserved
             </p>
           </div>
 
@@ -45,26 +49,35 @@ export default function Footer({ data }: any) {
               <p className="text-lg text-gray-600 dark:text-gray-300 pb-2 font-bold">
                 Our products
               </p>
+
               <ul>
-                {data.ourProducts
-                  .filter(
-                    (item: any) =>
-                      item.code !== process.env.NEXT_PUBLIC_WEBSITE_CODE
-                  )
-                  .map((item: any) => (
-                    <li
-                      key={item.code}
-                      className="pb-1 text-sm text-gray-600 dark:text-gray-300"
-                    >
-                      <Link
-                        className="hover:text-red-400"
-                        href={item.href}
-                        target="_blank"
-                      >
-                        {item.title}
-                      </Link>
+                {(products.tools || []).map(
+                  (item: {
+                    code: string;
+                    external: string;
+                    href: string;
+                    title: string;
+                  }) => (
+                    <li key={item.code} className="pb-2 text-md">
+                      {item.external ? (
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          className="hover:text-red-400"
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="pb-2 hover:text-red-400"
+                        >
+                          {item.title}
+                        </Link>
+                      )}
                     </li>
-                  ))}
+                  )
+                )}
               </ul>
             </div>
           )}
