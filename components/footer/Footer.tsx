@@ -58,7 +58,10 @@ export default function Footer({ data }: any) {
                     href: string;
                     title: string;
                   }) => (
-                    <li key={item.code} className="pb-2 text-md">
+                    <li
+                      key={item.code}
+                      className="pb-1 text-sm text-gray-600 dark:text-gray-300"
+                    >
                       {item.external ? (
                         <a
                           href={item.href}
